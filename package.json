@@ -1,0 +1,51 @@
+{
+  "name": "@gege-mn/gege-linter",
+  "version": "0.0.1",
+  "description": "Linter for traditional Mongolian script (Mongol bichig) text — flags incorrect or legacy Unicode usage: suffix connectors, FVS placement, PUA leftovers.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "prepublishOnly": "pnpm build && pnpm typecheck && pnpm test"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "mongolian",
+    "mongol-bichig",
+    "unicode",
+    "linter",
+    "mvs",
+    "fvs",
+    "nnbsp",
+    "typography"
+  ],
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  }
+}
