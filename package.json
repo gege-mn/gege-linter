@@ -4,6 +4,14 @@
   "description": "Linter for traditional Mongolian script (Mongol bichig) text — flags incorrect or legacy Unicode usage: suffix connectors, FVS placement, PUA leftovers.",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/L-Atelier-Gege/gege-linter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/L-Atelier-Gege/gege-linter/issues"
+  },
+  "homepage": "https://github.com/L-Atelier-Gege/gege-linter#readme",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
