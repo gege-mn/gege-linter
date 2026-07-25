@@ -99,7 +99,7 @@ mechanical, a `fix` replacement string.
 | `zwj-zwnj` | warning | ZWJ/ZWNJ beside a Mongolian letter — running text never needs them (emoji sequences are left alone) |
 | `nnbsp-legacy` | warning | NNBSP joining two Mongolian letters — the pre-16.0 suffix connector; fix: MVS |
 | `unknown-suffix` | warning | MVS- (or legacy NNBSP-) joined letter run not in the curated 63-entry Hudum suffix dictionary (`references/suffixes.md` in the mongol-bichig skill); the separated final a/e (ᠬᠠᠷ‑ᠠ) is exempt |
-| `non-initial-o` | info | O/Ö (U+1823/U+1825) past the first syllable — dumb vowel-position heuristic; native exceptions (ᠮᠣᠩᠭᠣᠯ) and loanwords are legitimate |
+| `non-initial-o` | info | O/Ö (U+1823/U+1825) past the first syllable — dumb vowel-position heuristic; loanwords (ᠹᠣᠲᠣ) and lexical exceptions (ᠭᠣᠣᠯ) are legitimate, but ᠮᠣᠩᠭᠣᠯ is a real hit — write ᠮᠣᠩᠭᠤᠯ |
 
 The suffix dictionary itself ships as part of the public API (`suffixes`),
 sourced from school grammar, UTN #57, and the mongfontbuilder registry.
@@ -118,7 +118,7 @@ the standardized-variant tables · full stem–suffix vowel-harmony agreement.
 - **No third-party dependencies.** Pure TypeScript, code-point offsets, runs
   anywhere — editor, CI, browser. The one dependency is
   [`@gege-mn/mongol-bichig`](https://github.com/gege-mn/mongol-bichig), the
-  first-party data package that also backs the convertor.
+  first-party data package that also backs the converter.
 
 ## Agent skills
 

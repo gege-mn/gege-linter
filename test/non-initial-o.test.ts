@@ -7,9 +7,14 @@ describe('non-initial-o', () => {
   });
 
   it('hints at O past the first syllable, at info severity', () => {
-    // ᠮᠣᠩᠭᠣᠯ is itself a legitimate native exception — which is why this is info, not error
+    // ᠮᠣᠩᠭᠣᠯ is a real hit, not an exception: ᠮᠣᠩᠭᠤᠯ is the correct spelling.
+    // Severity stays info because loanwords and ᠭᠣᠣᠯ legitimately trip it.
     expect(lint('ᠮᠣᠩᠭᠣᠯ', [nonInitialO])).toMatchObject([{ start: 4, severity: 'info' }]);
     expect(lint('ᠣᠷᠣᠨ', [nonInitialO])).toMatchObject([{ start: 2 }]);
+  });
+
+  it('does not fire on the corrected spelling', () => {
+    expect(lint('ᠮᠣᠩᠭᠤᠯ', [nonInitialO])).toHaveLength(0);
   });
 
   it('resets at word boundaries', () => {

@@ -3,7 +3,7 @@
  *
  * The linter does not own this data. Its normative source is
  * `skills/mongol-bichig/references/suffixes.md` in that repository, which a
- * test there parses to verify every row — and the convertor reads the same
+ * test there parses to verify every row — and the converter reads the same
  * table, so a correction lands in both tools at once.
  *
  * `suffixes` here is the **connector-joined** subset: the 63 entries a

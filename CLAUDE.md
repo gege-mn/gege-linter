@@ -64,7 +64,7 @@ The suffix dictionary is **not this repo's data** — it is
 `connectorSuffixes` from `@gege-mn/mongol-bichig`, whose normative source is
 `references/suffixes.md` over there, cross-checked row by row by a test in
 that repository. A suffix correction belongs there, not here; it then
-reaches the convertor too.
+reaches the converter too.
 
 ## Rule roadmap
 
@@ -87,8 +87,17 @@ Tier 1 — pure sequence checks, no data files — ALL DONE (2026-07-23):
 
 Bonus (user request, 2026-07-23): `non-initial-o` — DONE. Dumb
 vowel-position heuristic at info severity: O/Ö (U+1823/1825) after the
-word's first vowel; MVS/NNBSP/nirugu/FVS count as word-internal. Info on
-purpose — ᠮᠣᠩᠭᠣᠯ itself is a legitimate native exception.
+word's first vowel; MVS/NNBSP/nirugu/FVS count as word-internal.
+
+**The rule is categorical — ᠮᠣᠩᠭᠣᠯ is a real hit, not an exception**
+(corrected 2026-07-26; these notes previously claimed the opposite). The
+correct spelling is ᠮᠣᠩᠭᠤᠯ, `mongγul`. Two independent confirmations: a
+bichig reader ruled on it, quoting the school rule that after the first
+syllable masculine words take у and feminine ү; and kimo/Tungaamal applies
+the rule throughout its own output (ᠪᠣᠭᠤᠨᠢ, ᠣᠷᠤᠢ, ᠲᠣᠭᠤᠭ᠎ᠠ), exempting
+this one word alone. Severity stays **info** regardless, because loanwords
+keep their o (ᠹᠣᠲᠣ, ᠻᠢᠨᠣ) and ᠭᠣᠣᠯ is a genuine lexical exception with a
+doubled short o.
 
 Tier 2 — data-driven (the data lives in `@gege-mn/mongol-bichig`):
 7. `unknown-suffix` — DONE. Connector followed by a sequence not in the
@@ -117,7 +126,7 @@ way.
 - **~/Projects/mongol-bichig** — the shared source of truth: canonical data
   (`@gege-mn/mongol-bichig`), the reference documents, and both agent skills.
   Suffix or script-fact corrections go there.
-- **~/Projects/gege-convertor** — `@gege-mn/gege-convertor`, Cyrillic →
+- **~/Projects/gege-converter** — `@gege-mn/gege-converter`, Cyrillic →
   bichig. The inverse problem: this validates text, that generates it. It
   will consume the same package. Its stage 8 takes `lint` from here as an
   injected hook, so it depends on this package but this one never depends

@@ -32,3 +32,24 @@ describe('nnbsp-legacy', () => {
     expect(lint(`᠑${NNBSP}ᠳᠦᠭᠡᠷ`, [nnbspLegacy])).toHaveLength(1);
   });
 });
+
+describe('nnbsp-legacy before space-joined particles', () => {
+  // ᠤᠤ/ᠦᠦ/ᠪᠦᠦ/ᠦᠭᠡᠢ are separate words: the correction is a space, not MVS.
+  // Swapping in MVS would trade a legacy bug for a current one.
+  it('fixes NNBSP before ᠦᠦ to a plain space', () => {
+    expect(lint('ᠦᠭᠡᠢ\u202Fᠦᠦ', [nnbspLegacy])).toMatchObject([{ fix: ' ' }]);
+  });
+
+  it('fixes NNBSP before ᠤᠤ to a plain space', () => {
+    expect(lint('ᠰᠠᠶᠢᠨ\u202Fᠤᠤ', [nnbspLegacy])).toMatchObject([{ fix: ' ' }]);
+  });
+
+  it('still fixes an ordinary suffix connector to MVS', () => {
+    expect(lint('ᠭᠠᠵᠠᠷ\u202Fᠤᠨ', [nnbspLegacy])).toMatchObject([{ fix: '\u180E' }]);
+  });
+
+  it('does not treat a particle-lookalike prefix as a particle', () => {
+    // ᠤᠤᠯ continues past ᠤᠤ, so this is a suffix, not the question particle.
+    expect(lint('ᠭᠠᠵᠠᠷ\u202Fᠤᠤᠯ', [nnbspLegacy])).toMatchObject([{ fix: '\u180E' }]);
+  });
+});

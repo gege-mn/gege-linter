@@ -3,7 +3,7 @@
  *
  * These are not the linter's own — they live in `@gege-mn/mongol-bichig`
  * alongside the reference documents that define them, so the linter and the
- * convertor cannot drift apart on what counts as a Mongolian letter or which
+ * converter cannot drift apart on what counts as a Mongolian letter or which
  * code point the suffix connector is. Re-exported here so rule modules keep
  * importing from one place.
  */
