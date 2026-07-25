@@ -6,12 +6,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/L-Atelier-Gege/gege-linter.git"
+    "url": "git+https://github.com/gege-mn/gege-linter.git"
   },
   "bugs": {
-    "url": "https://github.com/L-Atelier-Gege/gege-linter/issues"
+    "url": "https://github.com/gege-mn/gege-linter/issues"
   },
-  "homepage": "https://github.com/L-Atelier-Gege/gege-linter#readme",
+  "homepage": "https://github.com/gege-mn/gege-linter#readme",
   "bin": {
     "gege-linter": "./dist/cli.js"
   },
@@ -37,7 +37,6 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "biome check .",
-    "sync:skills": "node scripts/sync-skill-refs.mjs",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "prepublishOnly": "pnpm build && pnpm typecheck && pnpm test"
@@ -55,6 +54,9 @@
     "nnbsp",
     "typography"
   ],
+  "dependencies": {
+    "@gege-mn/mongol-bichig": "^0.1.0"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.5.1",
     "@types/node": "^26.1.1",

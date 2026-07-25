@@ -98,7 +98,7 @@ mechanical, a `fix` replacement string.
 | `wrong-block` | warning | Todo / Sibe / Manchu / Ali Gali letters in Hudum text; known look-alikes (U+1888/U+1889) get a mechanical fix |
 | `zwj-zwnj` | warning | ZWJ/ZWNJ beside a Mongolian letter — running text never needs them (emoji sequences are left alone) |
 | `nnbsp-legacy` | warning | NNBSP joining two Mongolian letters — the pre-16.0 suffix connector; fix: MVS |
-| `unknown-suffix` | warning | MVS- (or legacy NNBSP-) joined letter run not in the curated 63-entry Hudum suffix dictionary (`docs/suffixes.md`); the separated final a/e (ᠬᠠᠷ‑ᠠ) is exempt |
+| `unknown-suffix` | warning | MVS- (or legacy NNBSP-) joined letter run not in the curated 63-entry Hudum suffix dictionary (`references/suffixes.md` in the mongol-bichig skill); the separated final a/e (ᠬᠠᠷ‑ᠠ) is exempt |
 | `non-initial-o` | info | O/Ö (U+1823/U+1825) past the first syllable — dumb vowel-position heuristic; native exceptions (ᠮᠣᠩᠭᠣᠯ) and loanwords are legitimate |
 
 The suffix dictionary itself ships as part of the public API (`suffixes`),
@@ -115,20 +115,28 @@ the standardized-variant tables · full stem–suffix vowel-harmony agreement.
   published standard, not taste.
 - **Fixes, not just flags.** Every legacy connector comes with a
   one-code-point replacement.
-- **Zero dependencies.** Pure TypeScript, code-point offsets, runs anywhere —
-  editor, CI, browser.
+- **No third-party dependencies.** Pure TypeScript, code-point offsets, runs
+  anywhere — editor, CI, browser. The one dependency is
+  [`@gege-mn/mongol-bichig`](https://github.com/gege-mn/mongol-bichig), the
+  first-party data package that also backs the convertor.
 
 ## Agent skills
 
-The repo ships two [agent skills](https://github.com/vercel-labs/skills):
-**`mongol-bichig`** — the script's encoding model distilled from the
-source-verified `docs/` knowledge base, for any agent that touches bichig
-text — and **`gege-linter`** — using this library and CLI.
+Two [agent skills](https://github.com/vercel-labs/skills) cover this
+project — **`mongol-bichig`** (the script's encoding model, for any agent
+that touches bichig text) and **`gege-linter`** (using this library and
+CLI). Both live in the
+[mongol-bichig](https://github.com/gege-mn/mongol-bichig) repository,
+alongside the source-verified knowledge base they distil:
 
 ```sh
-npx skills add L-Atelier-Gege/gege-linter            # pick interactively
-npx skills add L-Atelier-Gege/gege-linter --all      # both
+npx skills add gege-mn/mongol-bichig          # pick interactively
+npx skills add gege-mn/mongol-bichig --all    # both
 ```
+
+That repository is also where the deep reference documentation lives —
+encoding model, history, variation sequences, script styles, suffixes,
+legacy encodings, fonts and rendering, orthography.
 
 ## Development
 
@@ -137,7 +145,6 @@ pnpm install
 pnpm test
 pnpm build
 pnpm lint
-pnpm sync:skills  # after editing docs/ — refresh the skill's reference mirror
 ```
 
 [UTN #57]: https://www.unicode.org/notes/tn57/

@@ -19,8 +19,9 @@ const afterFvs = (cps: readonly string[], j: number): number => {
 
 /**
  * A suffix connector (MVS, or legacy NNBSP) must introduce a letter sequence
- * from the Hudum suffix dictionary (src/data/suffixes.ts, curated in
- * docs/suffixes.md). Warning, not error: the dictionary is believed complete
+ * from the Hudum suffix dictionary — `connectorSuffixes` in
+ * @gege-mn/mongol-bichig, whose normative source is that package's
+ * references/suffixes.md. Warning, not error: the dictionary is believed complete
  * for standard Hudum, but foreign names and Ali Gali text exist.
  *
  * Out of scope here: bare or misplaced connectors (mvs-context), the NNBSP
