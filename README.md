@@ -45,8 +45,9 @@ feet:
 
 - **1999** — Unicode 3.0 prescribes **NNBSP (U+202F)** as the suffix
   connector.
-- **2017** — A dedicated suffix-connector character is proposed — and
-  rejected.
+- **2017** — A dedicated suffix-connector character is proposed; the
+  committee takes no action, and its code point later becomes a fourth
+  variation selector instead.
 - **2023** — Noto Sans Mongolian is re-engineered onto the new shaping model.
 - **2024** — **Unicode 16.0 moves the connector role to MVS (U+180E).**
   NNBSP becomes legacy — mentioned only in the rewritten spec chapter, not
@@ -61,8 +62,22 @@ used by millions. gege-linter encodes the current model (Unicode 16+,
 
 ## Usage
 
+### CLI
+
+```sh
+pnpm dlx @gege-mn/gege-linter file.txt        # lint (or: npx @gege-mn/gege-linter)
+gege-linter --fix file.txt                    # apply mechanical fixes in place
+gege-linter --json file.txt                   # machine-readable output
+cat file.txt | gege-linter --fix - > out.txt  # stdin; fixed text on stdout
+```
+
+Exit codes: `0` clean or warnings only · `1` error-severity findings ·
+`2` usage or I/O failure.
+
+### Library
+
 ```ts
-import { applyFixes, lint } from 'gege-linter';
+import { applyFixes, lint } from '@gege-mn/gege-linter';
 
 const diagnostics = lint(text);
 // [{ rule: 'nnbsp-legacy', severity: 'warning', start: 5, end: 6, fix: '\u180E', … }]
@@ -103,6 +118,18 @@ the standardized-variant tables · full stem–suffix vowel-harmony agreement.
 - **Zero dependencies.** Pure TypeScript, code-point offsets, runs anywhere —
   editor, CI, browser.
 
+## Agent skills
+
+The repo ships two [agent skills](https://github.com/vercel-labs/skills):
+**`mongol-bichig`** — the script's encoding model distilled from the
+source-verified `docs/` knowledge base, for any agent that touches bichig
+text — and **`gege-linter`** — using this library and CLI.
+
+```sh
+npx skills add L-Atelier-Gege/gege-linter            # pick interactively
+npx skills add L-Atelier-Gege/gege-linter --all      # both
+```
+
 ## Development
 
 ```sh
@@ -110,6 +137,7 @@ pnpm install
 pnpm test
 pnpm build
 pnpm lint
+pnpm sync:skills  # after editing docs/ — refresh the skill's reference mirror
 ```
 
 [UTN #57]: https://www.unicode.org/notes/tn57/
