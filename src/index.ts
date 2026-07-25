@@ -3,12 +3,24 @@ import { mvsContext } from './rules/mvs-context.js';
 import { nnbspLegacy } from './rules/nnbsp-legacy.js';
 import { noPua } from './rules/no-pua.js';
 import { nonInitialO } from './rules/non-initial-o.js';
+import { unknownSuffix } from './rules/unknown-suffix.js';
 import { wrongBlock } from './rules/wrong-block.js';
 import { zwjZwnj } from './rules/zwj-zwnj.js';
 import type { Diagnostic, Rule } from './types.js';
 
+export type { SuffixCategory, SuffixEntry } from './data/suffixes.js';
+export { suffixes } from './data/suffixes.js';
 export type { Diagnostic, Rule, Severity } from './types.js';
-export { fvsPlacement, mvsContext, nnbspLegacy, nonInitialO, noPua, wrongBlock, zwjZwnj };
+export {
+  fvsPlacement,
+  mvsContext,
+  nnbspLegacy,
+  nonInitialO,
+  noPua,
+  unknownSuffix,
+  wrongBlock,
+  zwjZwnj,
+};
 
 /** Every built-in rule: structural errors, then legacy/compat warnings, then hints. */
 export const rules: readonly Rule[] = [
@@ -18,6 +30,7 @@ export const rules: readonly Rule[] = [
   wrongBlock,
   zwjZwnj,
   nnbspLegacy,
+  unknownSuffix,
   nonInitialO,
 ];
 

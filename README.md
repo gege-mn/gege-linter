@@ -83,11 +83,14 @@ mechanical, a `fix` replacement string.
 | `wrong-block` | warning | Todo / Sibe / Manchu / Ali Gali letters in Hudum text; known look-alikes (U+1888/U+1889) get a mechanical fix |
 | `zwj-zwnj` | warning | ZWJ/ZWNJ beside a Mongolian letter — running text never needs them (emoji sequences are left alone) |
 | `nnbsp-legacy` | warning | NNBSP joining two Mongolian letters — the pre-16.0 suffix connector; fix: MVS |
+| `unknown-suffix` | warning | MVS- (or legacy NNBSP-) joined letter run not in the curated 63-entry Hudum suffix dictionary (`docs/suffixes.md`); the separated final a/e (ᠬᠠᠷ‑ᠠ) is exempt |
 | `non-initial-o` | info | O/Ö (U+1823/U+1825) past the first syllable — dumb vowel-position heuristic; native exceptions (ᠮᠣᠩᠭᠣᠯ) and loanwords are legitimate |
 
-Roadmap (see `CLAUDE.md`): `space-before-suffix` and suffix-dictionary
-checks against UTN #57's 47-particle data · FVS registration against the
-standardized-variant tables · full stem–suffix vowel-harmony agreement.
+The suffix dictionary itself ships as part of the public API (`suffixes`),
+sourced from school grammar, UTN #57, and the mongfontbuilder registry.
+
+Roadmap (see `CLAUDE.md`): `space-before-suffix` · FVS registration against
+the standardized-variant tables · full stem–suffix vowel-harmony agreement.
 
 ## Why it matters
 

@@ -32,7 +32,10 @@ consts) but deliberately its own project.
   v4, 2024, unicode.org/notes/tn57/) is the authoritative shaping registry;
   implements GB/T 25914—2023.
 - **Machine-readable data**: github.com/Kushim-Jiang/mongfontbuilder (MIT) —
-  `particles.json` (closed 47-entry Hudum suffix dictionary),
+  `particles.json` (47 Hudum entries — a *shaping* registry: only particles
+  where some letter takes a particle-specific form; ᠪᠠᠷ/ᠲᠠᠢ/ᠲᠤᠷ/ᠡᠴᠡ etc.
+  are validly absent, so it can confirm suffixes but never refute them —
+  established 2026-07-25, see docs/suffixes.md which is the real dictionary),
   `variants.json` (FVS registrations), `writtenUnits.json`. Also UCD
   `StandardizedVariants.txt` (60 Mongolian SVS, FVS1–3) and CLDR `mn_Mong`
   exemplars (U+1820–1842 = modern Hudum alphabet). Vendor these as JSON under
