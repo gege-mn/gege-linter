@@ -1,3 +1,4 @@
+import { fusableStack } from './rules/fusable-stack.js';
 import { fvsPlacement } from './rules/fvs-placement.js';
 import { mvsContext } from './rules/mvs-context.js';
 import { nnbspLegacy } from './rules/nnbsp-legacy.js';
@@ -12,6 +13,7 @@ export type { SuffixCategory, SuffixEntry } from './data/suffixes.js';
 export { suffixes } from './data/suffixes.js';
 export type { Diagnostic, Rule, Severity } from './types.js';
 export {
+  fusableStack,
   fvsPlacement,
   mvsContext,
   nnbspLegacy,
@@ -32,6 +34,7 @@ export const rules: readonly Rule[] = [
   nnbspLegacy,
   unknownSuffix,
   nonInitialO,
+  fusableStack,
 ];
 
 /** Lint Mongolian-script text; diagnostics come back sorted by position. */
