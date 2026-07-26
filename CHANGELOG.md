@@ -1,5 +1,45 @@
 # Changelog
 
+## Unreleased
+
+Not released: the new rule fires on text that is already correct, so whether
+that ships by default is the owner's call. A 0.4.0 minor is the right shape if
+it does.
+
+### Added
+
+- **`fusable-stack`** (info, **no fix**) — an analytic (задлаг) case +
+  reflexive stack that has a registered fused (нийлэг) equivalent: ᠳᠤ + ᠪᠠᠨ
+  may also be written ᠳᠠᠭᠠᠨ, ᠳᠦ + ᠪᠡᠨ as ᠳᠡᠭᠡᠨ, and likewise for ᠲᠤ/ᠲᠦ and
+  ᠠᠴᠠ/ᠡᠴᠡ. Both spellings are correct, which is why it carries no mechanical
+  fix — `--fix` must never rewrite one valid style into another. The fused
+  sequence is named in the message and the reported span covers the whole
+  stack including its leading connector, so a consumer that wants one-click
+  apply builds connector + sequence over that span. Requested by a bichig
+  reader; 538 analytic stacks in 4,000 sentences of real bichig and **zero**
+  fused forms anywhere in that corpus.
+- `test/rulings.test.ts` — the verdicts a bichig reader returned on a
+  28-item random spot check (seed 161294890). Confirmed 4 of 4 on
+  `nnbsp-legacy`'s NNBSP→MVS swap, on `wrong-block`'s U+1888→ᠬ / U+1889→ᠭ, and
+  on `unknown-suffix`'s stray-FVS drop — that last one **reversing an earlier
+  contradiction** from the same reader, re-checked against current Noto. Four
+  clean words drew no false positives. Open questions are `it.todo` with the
+  correct answer written down; do not re-litigate them.
+- `scripts/build-spotcheck.mjs` — dev-only generator for that review page.
+  Draws a random, rule-balanced sample of real third-party bichig, runs `lint`
+  over it, and renders a vertical-script page whose selections collect into one
+  copy-pasteable answer block. Reproducible by seed. Not shipped: `files` is
+  still `dist` only.
+
+### Changed
+
+- **`fvs-placement` messages now name what the selector landed on** — e.g.
+  "FVS1 (U+180B) follows FVS1 (U+180B)". A doubled selector previously read as
+  a complaint about the visible letter before it, and a reader ruled the one
+  real error in a 31,320-word corpus a false alarm for a claim the rule was
+  never making. Diagnostic rule, severity, span and fix are unchanged; only the
+  message text differs.
+
 ## 0.3.2 — 2026-07-27
 
 ### Changed

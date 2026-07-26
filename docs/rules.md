@@ -42,6 +42,23 @@ this one word alone. Severity stays **info** regardless, because loanwords
 keep their o (ᠹᠣᠲᠣ, ᠻᠢᠨᠣ) and ᠭᠣᠣᠯ is a genuine lexical exception with a
 doubled short o.
 
+Bonus (user request, 2026-07-27): `fusable-stack` — DONE. An analytic
+(задлаг) case + reflexive stack that has a registered fused (нийлэг)
+equivalent: ᠳᠤ + ᠪᠠᠨ → ᠳᠠᠭᠠᠨ, ᠳᠦ + ᠪᠡᠨ → ᠳᠡᠭᠡᠨ, and the same for
+ᠲᠤ/ᠲᠦ and ᠠᠴᠠ/ᠡᠴᠡ. **Info, and deliberately with no `fix`** — both
+spellings are correct, so a mechanical fix would let `--fix` rewrite an
+author's style into the other valid form. The fused sequence is named in
+the message; a consumer wanting one-click apply builds connector + that
+sequence over the reported span. The pairing is keyed by translit and
+resolved against `connectorSuffixes` at load, so this repo still holds no
+copy of the dictionary's letters.
+
+Worth surfacing on the evidence: 538 analytic stacks in 4,000 sentences of
+real bichig and 76 in 31,320 words — with **zero** fused forms anywhere in
+the corpus. Whatever the reason writers avoid the fused form, they are not
+choosing it, and a linter that only ever complains would never tell them it
+exists.
+
 Tier 2 — data-driven (the data lives in `@gege-mn/mongol-bichig`):
 7. `unknown-suffix` — DONE. Connector followed by a sequence not in the
    63-entry `connectorSuffixes` registry (warn, not error).
@@ -60,6 +77,70 @@ Tier 2 — data-driven (the data lives in `@gege-mn/mongol-bichig`):
 Tier 3 — linguistic (optional, later): vowel-harmony agreement between stem
 and suffix (UTN #57 Table 5 masculine {a,o,u} vs feminine {e,ö,ü} is a decent
 heuristic); full lexicon checks are spell-checker territory — out of scope.
+
+Two candidates promoted out of tier 3 by the 2026-07-27 spot check, both
+mechanical and both with a fix:
+
+10. `medial-glide` — vowel + ᠶ (U+1836) + ᠢ (U+1822) → drop the ᠶ. The reader
+    asked for it unprompted ("1 и displays two shilbe after vowels in the new
+    unicode"), and mongol-bichig's `orthography.md` independently records that
+    UTN #57 prefers the modern analysis (ail, sayin → sain). Info or warning,
+    never error: the V+y+i spelling is *older*, not malformed. Guard the left
+    side on a **vowel letter**, not a connector — ᠶᠢᠨ/ᠢᠶᠡᠨ after MVS must not
+    match. gege-converter already does this in `normalizeOrthography`, so the
+    logic is worth sharing rather than reinventing.
+11. `doubled-ae` — adjacent ᠠᠠ (U+1820 U+1820) or ᠡᠡ (U+1821 U+1821). Long a/e
+    are never doubled; they take the γ/g hiatus, so this is a typo or a
+    letter-for-letter Cyrillic artifact (`orthography.md` calls it a strong
+    candidate rule at warning). 28 of the residual unknown-suffix runs in the
+    harvest are exactly this, and the reader confirmed one (өтгөнөө, where the
+    suffix should have been ᠢᠶᠡᠨ).
+
+## What the 2026-07-27 spot check settled
+
+28 items drawn at random from 31,320 words + 4,000 sentences of raw Tungaamal
+output (`scripts/build-spotcheck.mjs --seed 161294890`), ruled on by a bichig
+reader. Every verdict is recorded in `test/rulings.test.ts`; open ones are
+`it.todo` with the correct answer written down. **Do not re-litigate them.**
+
+Confirmed, 4 of 4 each: `nnbsp-legacy`'s NNBSP→MVS swap (and that it renders
+identically in current Noto), `wrong-block`'s U+1888→ᠬ / U+1889→ᠭ, and
+`unknown-suffix`'s stray-FVS drop. That last one **reverses an earlier
+contradiction** — the reader had previously said the FVS spelling was the only
+way they could get the font to behave; re-checked against current Noto, they
+confirmed it four times. The clean group drew four words and found no misses.
+
+Open, in rough order of how much corpus they move:
+
+- **Bare ᠬᠢ (U+182C U+1822) is missing from the registry.** Ruled a real
+  suffix twice (анчдынх, холтосныхоо — Cyrillic -ынх/-ных, the nominalizer).
+  It appears in the registry only inside ᠳᠠᠬᠢ/ᠳᠡᠬᠢ. 208 of the 977
+  unknown-suffix warnings that survive a full fix pass are this one sequence.
+  The addition belongs in **mongol-bichig**, not here.
+- **ᠳᠠᠬᠢ/ᠳᠡᠬᠢ: reader and reference disagree.** `suffixes.md` lists them as
+  registry-confirmed fused suffixes taking MVS; the reader says дахь/дэх is a
+  separate word taking a plain space. Unresolved — settle it in mongol-bichig
+  against the source, not by editing either side here.
+- **`non-initial-o` fires on loanwords.** Both info hits were ruled "loanword,
+  should be exempt", with the general rule stated: foreign words may carry o/ö
+  after the first syllable. Partially fixable — рационализмаар carries ᠼ
+  (U+183C), a foreign-only letter — but лантаноид is spelled entirely with
+  native letters and cannot be detected this way. Severity stays info.
+- **`fvs-placement`'s error severity is unconfirmed.** The one error in the
+  whole corpus (редакторлах, a doubled FVS1) was ruled a false alarm — but on
+  a misreading, because the old message did not say the selector had landed on
+  another selector. The message now names what it landed on; re-ask before
+  changing severity.
+- **`zwj-zwnj` is unruled.** Both draws were abbreviations (ЗХУ, ЕХ) with ZWJ
+  holding a non-final form before U+1802. The reader could not rule on them.
+- **Rule 8 has real-world evidence now.** холтосныхоо, агаар мандал дахь… and
+  Магадгүй… all write the genitive ᠤ as a separate token after a plain U+0020,
+  and the linter says nothing. Not rare in the corpus.
+
+Residual `unknown-suffix` runs, after a full fix-and-re-lint pass over the
+whole corpus, are dominated by six sequences — ᠬᠢ, ᠯᠡ/ᠯᠠ (463 in sentences),
+ᠰᠢᠭ (121), ᠤᠷᠤᠭᠤ (65), ᠠᠠ/ᠡᠡ (88), ᠰᠠᠨ (15). Each is worth one reader ruling
+and hundreds of corpus hits; that is the highest-leverage next spot check.
 
 Surfaces: the CLI is DONE (2026-07-25; `src/cli.ts`, bin `gege-linter` —
 `--fix`/`--json`/stdin via `-`, exit 1 only on error severity; `runCli` is
