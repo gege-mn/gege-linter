@@ -7,6 +7,20 @@ legacy Unicode usage. Born out of ~/Projects/gege.mn (the studio site, its
 first consumer: the /type pad's issues panel + a CI scan of bichig string
 consts) but deliberately its own project.
 
+## Publishing is the owner's, never the agent's
+
+**`npm publish` is run only by the repository owner.** Never run it, never add
+it to a script an agent invokes, and never treat a release as something to
+carry over the line yourself. The registry requires an OTP an agent cannot
+supply, so an attempt fails at best and half-releases at worst.
+
+What an agent *may* do, and should: bump the version, write the CHANGELOG, run
+the `prepublishOnly` chain locally (`pnpm build && pnpm typecheck && pnpm
+test`), confirm `npm pack --dry-run` ships the right files, and then say the
+release is ready. The last command belongs to the owner. Same rule in
+[gege-converter](https://github.com/gege-mn/gege-converter) and
+[mongol-bichig](https://github.com/gege-mn/mongol-bichig).
+
 ## Project conventions
 
 - **pnpm**, Biome (lint + format, 2-space indent, single quotes), Vitest,
@@ -78,8 +92,7 @@ Tier 1 — pure sequence checks, no data files — ALL DONE (2026-07-23):
    the Unicode equivalent" fixes.
 5. `wrong-block` — DONE. Todo (U+1843–185C) / Sibe (U+185D–1872) / Manchu
    (U+1873–1877) / Ali Gali (U+1880–18AA) in Hudum text → warning; the
-   Ali Gali look-alikes U+1888/U+1889, which real keyboards emit for the
-   feminine k/g, carry mechanical fixes to ᠬ/ᠭ;
+   Tungaamal look-alikes U+1888/U+1889 carry mechanical fixes to ᠬ/ᠭ;
    U+1878 (chart-classified "Buryat letter", Unicode 11.0 — Hudum-sphere)
    deliberately not flagged. U+1879 ALTERNATE UE is pipeline-limbo
    (accepted 2025, reverted 2026) — treat as unassigned, may return.
@@ -94,8 +107,8 @@ word's first vowel; MVS/NNBSP/nirugu/FVS count as word-internal.
 (corrected 2026-07-26; these notes previously claimed the opposite). The
 correct spelling is ᠮᠣᠩᠭᠤᠯ, `mongγul`. Two independent confirmations: a
 bichig reader ruled on it, quoting the school rule that after the first
-syllable masculine words take у and feminine ү; and a widely used commercial
-converter applies the rule throughout its own output (ᠪᠣᠭᠤᠨᠢ, ᠣᠷᠤᠢ, ᠲᠣᠭᠤᠭ᠎ᠠ), exempting
+syllable masculine words take у and feminine ү; and Tungaamal applies
+the rule throughout its own output (ᠪᠣᠭᠤᠨᠢ, ᠣᠷᠤᠢ, ᠲᠣᠭᠤᠭ᠎ᠠ), exempting
 this one word alone. Severity stays **info** regardless, because loanwords
 keep their o (ᠹᠣᠲᠣ, ᠻᠢᠨᠣ) and ᠭᠣᠣᠯ is a genuine lexical exception with a
 doubled short o.

@@ -25,7 +25,7 @@ const particleAt = (cps: readonly string[], j: number): boolean =>
  * a plain U+0020 and must never be connector-joined at all, so NNBSP before
  * one of them is corrected to a space rather than swapped for another
  * connector. Emitting MVS there just trades a legacy bug for a current one —
- * and it is a live case, not a hypothetical: a widely used commercial converter writes
+ * and it is a live case, not a hypothetical: Tungaamal writes
  * ᠦᠭᠡᠢ<NNBSP>ᠦᠦ in ordinary text.
  */
 export const nnbspLegacy: Rule = {

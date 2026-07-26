@@ -10,8 +10,8 @@ const OE = 'ᠥ';
  *
  * The rule is categorical, so ᠮᠣᠩᠭᠣᠯ is a real hit and not an exception:
  * the correct spelling is ᠮᠣᠩᠭᠤᠯ. This reverses what the rule's own notes
- * claimed until 2026-07-26 — a bichig reader ruled on it, and a widely
- * used commercial converter applies the rule everywhere else in its output (ᠪᠣᠭᠤᠨᠢ, ᠣᠷᠤᠢ,
+ * claimed until 2026-07-26 — a bichig reader ruled on it, and Tungaamal
+ * applies the rule everywhere else in its own output (ᠪᠣᠭᠤᠨᠢ, ᠣᠷᠤᠢ,
  * ᠲᠣᠭᠤᠭ\u180Eᠠ) while exempting only this one word.
  *
  * Info severity on purpose all the same: loanwords keep their o (ᠹᠣᠲᠣ,
