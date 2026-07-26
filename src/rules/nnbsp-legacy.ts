@@ -10,8 +10,7 @@ const PARTICLES = spaceParticles
 /** Whether a space particle starts at `j` and ends the word there. */
 const particleAt = (cps: readonly string[], j: number): boolean =>
   PARTICLES.some(
-    (seq) =>
-      seq.every((ch, k) => cps[j + k] === ch) && !isMongolLetter(cp(cps[j + seq.length])),
+    (seq) => seq.every((ch, k) => cps[j + k] === ch) && !isMongolLetter(cp(cps[j + seq.length])),
   );
 
 /**
@@ -26,7 +25,7 @@ const particleAt = (cps: readonly string[], j: number): boolean =>
  * a plain U+0020 and must never be connector-joined at all, so NNBSP before
  * one of them is corrected to a space rather than swapped for another
  * connector. Emitting MVS there just trades a legacy bug for a current one —
- * and it is a live case, not a hypothetical: kimo/Tungaamal writes
+ * and it is a live case, not a hypothetical: a widely used commercial converter writes
  * ᠦᠭᠡᠢ<NNBSP>ᠦᠦ in ordinary text.
  */
 export const nnbspLegacy: Rule = {

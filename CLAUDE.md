@@ -78,7 +78,8 @@ Tier 1 — pure sequence checks, no data files — ALL DONE (2026-07-23):
    the Unicode equivalent" fixes.
 5. `wrong-block` — DONE. Todo (U+1843–185C) / Sibe (U+185D–1872) / Manchu
    (U+1873–1877) / Ali Gali (U+1880–18AA) in Hudum text → warning; the
-   Tungaamal look-alikes U+1888/U+1889 carry mechanical fixes to ᠬ/ᠭ;
+   Ali Gali look-alikes U+1888/U+1889, which real keyboards emit for the
+   feminine k/g, carry mechanical fixes to ᠬ/ᠭ;
    U+1878 (chart-classified "Buryat letter", Unicode 11.0 — Hudum-sphere)
    deliberately not flagged. U+1879 ALTERNATE UE is pipeline-limbo
    (accepted 2025, reverted 2026) — treat as unassigned, may return.
@@ -93,8 +94,8 @@ word's first vowel; MVS/NNBSP/nirugu/FVS count as word-internal.
 (corrected 2026-07-26; these notes previously claimed the opposite). The
 correct spelling is ᠮᠣᠩᠭᠤᠯ, `mongγul`. Two independent confirmations: a
 bichig reader ruled on it, quoting the school rule that after the first
-syllable masculine words take у and feminine ү; and kimo/Tungaamal applies
-the rule throughout its own output (ᠪᠣᠭᠤᠨᠢ, ᠣᠷᠤᠢ, ᠲᠣᠭᠤᠭ᠎ᠠ), exempting
+syllable masculine words take у and feminine ү; and a widely used commercial
+converter applies the rule throughout its own output (ᠪᠣᠭᠤᠨᠢ, ᠣᠷᠤᠢ, ᠲᠣᠭᠤᠭ᠎ᠠ), exempting
 this one word alone. Severity stays **info** regardless, because loanwords
 keep their o (ᠹᠣᠲᠣ, ᠻᠢᠨᠣ) and ᠭᠣᠣᠯ is a genuine lexical exception with a
 doubled short o.
