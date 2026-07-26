@@ -1,2 +1,2 @@
 minimumReleaseAgeExclude:
-  - '@gege-mn/mongol-bichig@0.1.0'
+  - '@gege-mn/mongol-bichig@0.1.0 || 0.2.0'

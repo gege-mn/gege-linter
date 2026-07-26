@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@gege-mn/mongol-bichig':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.2.0
+        version: 0.2.0
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.5.1
@@ -93,8 +93,8 @@ packages:
   '@emnapi/wasi-threads@1.2.2':
     resolution: {integrity: sha512-c95qOXkHdydNKhscBTebqEC1CVAZpyqOfVfBzQ1qgzyl3gfeldUjIggDbIZgDKsHLgnsM+igH7TJ/eAasaVuMA==}
 
-  '@gege-mn/mongol-bichig@0.1.0':
-    resolution: {integrity: sha512-unhkv5g2Q7YOBUCf1Zo7Au92vfsGIgiCseddj4D3wM9CU1HvPltKydkBDyzvdskiwqJBRAsD5ZlNVNQSIs9ksw==}
+  '@gege-mn/mongol-bichig@0.2.0':
+    resolution: {integrity: sha512-LysAFXQll4tGD7tLHJ5oK/AU/N7gSWALcVG1es+tRVbczUH7tGbknL7M0O5Vu5jvK9oG1JHwzQnYLzzWIfIdow==}
     engines: {node: '>=18'}
 
   '@jridgewell/sourcemap-codec@1.5.5':
@@ -579,7 +579,7 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@gege-mn/mongol-bichig@0.1.0': {}
+  '@gege-mn/mongol-bichig@0.2.0': {}
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
