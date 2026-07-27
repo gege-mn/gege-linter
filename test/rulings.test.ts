@@ -195,3 +195,53 @@ describe('rulings / gaps the samples exposed', () => {
   // Cyrillic artifact. Confirmed once, in өтгөнөө above.
   it.todo('doubled-ae: adjacent ᠠᠠ / ᠡᠡ anywhere, not just after a connector');
 });
+
+describe('rulings / sequence check — the six residual runs, 2026-07-27', () => {
+  // One ruling per sequence rather than per word. The reader answered all six;
+  // four are corroborated by an outside source, one is contested by it, and one
+  // could not be validated at all. Sources are named per case — the linter's
+  // own corpus counts are not evidence about what is correct Mongolian.
+
+  // CONFIRMED TWICE OVER. Ruled "real suffix, add it to the registry", and
+  // L2/17-036 Appendix IV ("Mongolian suffixes as connected by NNBSP", the
+  // proposal that produced U+180F) lists NNBSP+182C+1822 under CASE-BOUND
+  // POSSESSION — together with ᠬᠢᠨ (NNBSP+182C+1822+1828), which is the -ныхан
+  // in лууныхан from the previous spot check. Both belong in mongol-bichig.
+  it.todo('accepts bare ᠬᠢ and ᠬᠢᠨ after a connector once mongol-bichig registers them');
+
+  // Ruled "real word, plain space". Corroborated: the CeLCAR Mongolian grammar
+  // files шиг under "Postpositions of Comparison: шиг, мэт", and it appears
+  // nowhere in Appendix IV's suffix inventory.
+  it.todo('treats ᠰᠢᠭ as a space-joined word, not a connector suffix');
+
+  // Ruled "real word, plain space". Appendix IV lists ᠤᠷᠤᠭᠤ under "DIRECTIVE
+  // CASE (may or may not use NNBSP)" — explicitly optional — and Wiktionary's
+  // руу entry notes that "due to its recent development as a grammatical case,
+  // directive case suffixes are written with a space between the stem and
+  // suffix". A space is right; a connector is not an error either.
+  it.todo('treats ᠤᠷᠤᠭᠤ as space-joined, with the connector tolerated');
+
+  // Ruled "not valid Mongolian", with the reason: "just single a/e does the job
+  // of аа/ээ and it is to be written as a separate word with full space… this
+  // specific a/e is for calling people or calling things." Appendix IV confirms
+  // the substance — its VOCATIVE CASE entry is a *single* ᠠ / ᠡ — but writes it
+  // with the connector, not a space. So the doubled form is settled wrong; the
+  // connector-versus-space question for the single form is not.
+  it.todo('flags doubled ᠠᠠ / ᠡᠡ anywhere as the Cyrillic artifact it is (doubled-ae)');
+  it.todo('re-ask: does the vocative single ᠠ/ᠡ take a plain space or the connector?');
+
+  // Ruled "real word, plain space" — but the option may not fit what this is.
+  // The sources point at "belongs on the stem": -сан is the verb past-tense
+  // suffix, written attached (CeLCAR "Past tense: -сан4"), which in bichig is
+  // part of the word as ᠭᠰᠠᠨ; and юмсан is one Cyrillic word, юм + сан
+  // (Wiktionary). Neither reading is a space-separated word. Re-ask.
+  it.todo('re-ask ᠰᠠᠨ: stem-attached participle and юмсан clitic, not a space-joined word');
+
+  // NOT VALIDATED, and the reader flagged their own uncertainty. Nothing lists
+  // ᠯᠠ/ᠯᠡ either way. Wiktionary has л as a Mongolian particle, but that cuts
+  // both ways: the registry ALREADY carries particles Cyrillic writes
+  // separately and bichig connects — ᠨᠢ/ᠮᠢᠨᠢ/ᠴᠢᠨᠢ (нь, минь, чинь) and ᠳᠠ/ᠳᠡ
+  // (даа), which CeLCAR groups in the same word class as л. Cyrillic spacing is
+  // therefore not evidence for bichig spacing. Needs a real source.
+  it.todo('ᠯᠠ / ᠯᠡ is unresolved — 465 corpus hits and no source either way');
+});

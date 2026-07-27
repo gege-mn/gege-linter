@@ -138,9 +138,57 @@ Open, in rough order of how much corpus they move:
   and the linter says nothing. Not rare in the corpus.
 
 Residual `unknown-suffix` runs, after a full fix-and-re-lint pass over the
-whole corpus, are dominated by six sequences — ᠬᠢ, ᠯᠡ/ᠯᠠ (463 in sentences),
-ᠰᠢᠭ (121), ᠤᠷᠤᠭᠤ (65), ᠠᠠ/ᠡᠡ (88), ᠰᠠᠨ (15). Each is worth one reader ruling
-and hundreds of corpus hits; that is the highest-leverage next spot check.
+whole corpus, are dominated by six sequences — ᠯᠡ/ᠯᠠ (465), ᠬᠢ (208), ᠰᠢᠭ
+(121), ᠠᠠ/ᠡᠡ (88), ᠤᠷᠤᠭᠤ (65), ᠰᠠᠨ (15) — together 98% of the 977 that
+survive. `scripts/build-sequence-check.mjs` asks one ruling per sequence.
+
+## The sequence check, and what sources say about it
+
+All six were ruled on 2026-07-27 and then checked against outside sources,
+because five of the six answers were "separate word", which is a large claim
+about shared data. Verdicts are in `test/rulings.test.ts`.
+
+**The decisive source is L2/17-036 Appendix IV**, "Mongolian suffixes as
+connected by NNBSP" — the 2017 proposal that produced U+180F, by Eck, West,
+Sanlig, Siqinbilige and Ou Rileke. It is the only enumerated connector
+inventory anyone has published. Diffing its 57 entries against our 63:
+
+- **ᠬᠢ (U+182C U+1822) and ᠬᠢᠨ are in it**, under "case-bound possession" —
+  independently confirming the reader. ᠬᠢᠨ is the -ныхан of лууныхан.
+- Also missing from our registry: ᠶᠤᠭᠠᠨ (the masculine mate of the ᠶᠦᠭᠡᠨ we
+  do have), ᠲᠠᠶᠢᠭᠠᠨ/ᠲᠡᠶᠢᠭᠡᠨ, and the vocative ᠠ/ᠡ, which the code
+  special-cases but the data never lists.
+- **It contradicts us on ᠦᠭᠡᠢ**, listing it as NNBSP-connected — against the
+  2026-07-25 ruling that it takes a space. It also hedges it under "negation
+  (may or may not use NNBSP)", so our position survives, but the conflict is
+  real and belongs in mongol-bichig's `sources.md`.
+- **It lists ᠳᠠᠬᠢ/ᠳᠡᠬᠢ twice** as connector-joined, supporting `suffixes.md`
+  over the reader's дахь ruling from the spot check.
+- Our particle entries (ᠨᠢ, ᠮᠢᠨᠢ, ᠴᠢᠨᠢ, ᠳᠠ/ᠳᠡ, ᠬᠦ …) are absent from it, but
+  its scope is case suffixes; its only "particles not using the NNBSP" are
+  ᠤᠤ/ᠦᠦ.
+
+Per sequence: **ᠰᠢᠭ** is corroborated — CeLCAR's grammar files it under
+"postpositions of comparison: шиг, мэт". **ᠤᠷᠤᠭᠤ** is corroborated with a
+hedge — Appendix IV marks the directive "may or may not use NNBSP", and
+Wiktionary notes directive-case suffixes are written with a space because the
+case developed recently. **ᠠᠠ/ᠡᠡ** is confirmed broken: the appendix's vocative
+is a *single* ᠠ/ᠡ, exactly as the reader said, though it writes it with the
+connector rather than a space. **ᠰᠠᠨ** looks mis-optioned — -сан is the verb
+past-tense suffix written attached (bichig ᠭᠰᠠᠨ) and юмсан is one Cyrillic
+word, so "belongs on the stem" fits the evidence better than "separate word".
+**ᠯᠠ/ᠯᠡ is unresolved**: no source lists it either way, and the obvious
+argument is a trap — Cyrillic writes нь, минь, чинь and даа as separate words
+while bichig connects all four, and they are in our registry already. Cyrillic
+spacing is not evidence about bichig spacing.
+
+**Do not expect a standard to settle these.** MLREQ states the principle and
+gives no inventory; UTN #57's particle dictionary governs *shaping*, not
+connector-versus-space, and only reaches particles beginning with a/e/i/u/ü/d/y/n
+— so ᠯᠠ, ᠰᠢᠭ, ᠰᠠᠨ and even ᠬᠢ could never appear in it whatever their status,
+and their absence proves nothing. Richard Ishida's orthography notes put it
+plainly: "there are no rules to determine when to apply it." Appendix IV plus a
+reader is the best evidence available.
 
 Surfaces: the CLI is DONE (2026-07-25; `src/cli.ts`, bin `gege-linter` —
 `--fix`/`--json`/stdin via `-`, exit 1 only on error severity; `runCli` is
