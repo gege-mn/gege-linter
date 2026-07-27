@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { lint, suffixes, unknownSuffix } from '../src/index.js';
+import { applyFixes, lint, suffixes, unknownSuffix } from '../src/index.js';
 
 const MVS = '\u180e';
 const NNBSP = '\u202f';
@@ -77,5 +77,30 @@ describe('unknown-suffix', () => {
     const [d] = lint(`${stem}${MVS}ᠤ\u180bᠰ`, [unknownSuffix]);
     expect(d).toMatchObject({ start: 4, end: 7 });
     expect(d?.fix).toBeUndefined();
+  });
+});
+
+describe('unknown-suffix / a connector in front of a whole word', () => {
+  it('names the word and corrects the MVS to a plain space', () => {
+    // ᠦᠭᠡᠢ is an ordinary separate word; bichig does not make Cyrillic's -гүй
+    // contraction, so MVS in front of it is the error.
+    const ds = lint(`ᠰᠠᠨᠠᠮᠰᠠᠷ${MVS}ᠦᠭᠡᠢ`, [unknownSuffix]);
+    expect(ds).toHaveLength(1);
+    expect(ds[0]?.message).toContain('separate word');
+    expect(applyFixes(`ᠰᠠᠨᠠᠮᠰᠠᠷ${MVS}ᠦᠭᠡᠢ`, ds)).toBe('ᠰᠠᠨᠠᠮᠰᠠᠷ ᠦᠭᠡᠢ');
+  });
+
+  it('offers no fix after NNBSP, where nnbsp-legacy already corrects the connector', () => {
+    // Two fixes overlapping the same code points would corrupt applyFixes, so
+    // this rule defers. Linting with every rule must stay single-fix there.
+    const text = `ᠰᠠᠨᠠᠮᠰᠠᠷ${NNBSP}ᠦᠭᠡᠢ`;
+    expect(lint(text, [unknownSuffix])[0]?.fix).toBeUndefined();
+    expect(lint(text).filter((d) => d.fix !== undefined)).toHaveLength(1);
+    expect(applyFixes(text, lint(text))).toBe('ᠰᠠᠨᠠᠮᠰᠠᠷ ᠦᠭᠡᠢ');
+  });
+
+  it('still reports a genuinely unknown run as an unknown suffix', () => {
+    const ds = lint(`ᠨᠡᠷ${MVS}ᠽᠽᠽ`, [unknownSuffix]);
+    expect(ds[0]?.message).toContain('Unknown Hudum suffix');
   });
 });

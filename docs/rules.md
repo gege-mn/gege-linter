@@ -64,8 +64,14 @@ Tier 2 — data-driven (the data lives in `@gege-mn/mongol-bichig`):
    63-entry `connectorSuffixes` registry (warn, not error).
 8. `space-before-suffix` — plain U+0020 before a known suffix ("did you mean
    MVS?") — the exact bug found by hand in gege.mn's footer. The package
-   already ships what this needs: `spaceParticles` (ᠤᠤ/ᠦᠦ/ᠪᠦᠦ/ᠦᠭᠡᠢ) is the
-   whitelist — a space before those is *correct* and an MVS is the error.
+   already ships what this needs: `spaceParticles` is the whitelist — a space
+   before those is *correct* and an MVS is the error. **Its mirror is done**
+   (2026-07-27): `unknown-suffix` now recognises a connector in front of a
+   space-joined word and says so — "‘ᠦᠭᠡᠢ’ (үгүй) is a separate word, not a
+   suffix" — with a fix swapping the connector for a space. The fix is offered
+   only after MVS; after NNBSP, `nnbsp-legacy` already corrects the connector
+   over a span *inside* this one, and two fixes overlapping the same code
+   points would corrupt `applyFixes`.
 9. `fvs-unregistered` — (letter, FVS) pair not in SVS/UTN #57 tables.
    Blocked on vendoring mongfontbuilder's `variants.json` **into
    mongol-bichig** (open item recorded in that repo's `sources.md`), not
@@ -89,12 +95,18 @@ mechanical and both with a fix:
     side on a **vowel letter**, not a connector — ᠶᠢᠨ/ᠢᠶᠡᠨ after MVS must not
     match. gege-converter already does this in `normalizeOrthography`, so the
     logic is worth sharing rather than reinventing.
-11. `doubled-ae` — adjacent ᠠᠠ (U+1820 U+1820) or ᠡᠡ (U+1821 U+1821). Long a/e
-    are never doubled; they take the γ/g hiatus, so this is a typo or a
-    letter-for-letter Cyrillic artifact (`orthography.md` calls it a strong
-    candidate rule at warning). 28 of the residual unknown-suffix runs in the
-    harvest are exactly this, and the reader confirmed one (өтгөнөө, where the
-    suffix should have been ᠢᠶᠡᠨ).
+11. `doubled-ae` — DONE (2026-07-27). Adjacent ᠠᠠ (U+1820 U+1820) or ᠡᠡ
+    (U+1821 U+1821), warning, **no fix**. Long a/e take the γ/g hiatus and are
+    never doubled, so a pair is Cyrillic аа/ээ copied letter for letter. The
+    reader ruled the sequence "not valid Mongolian" and named both populations
+    behind it: a reflexive that should have been ᠢᠶᠠᠨ/ᠢᠶᠡᠨ (адмиралаа,
+    аюулаа), and the vocative for calling someone, which is a **single** ᠠ/ᠡ
+    written as its own word (аав аа). Those two want different repairs, which
+    is why there is no mechanical fix — guessing would corrupt one to fix the
+    other. Doubling is specific to a/e: ᠣᠣ marks a short o (ᠭᠣᠣᠯ, ᠳᠣᠣᠷ᠎ᠠ) and
+    ᠤᠤ/ᠦᠦ are the question particles, so neither is touched. Fires on 88 of
+    35,320 harvest rows and on none of the four words the reader confirmed
+    clean.
 
 ## What the 2026-07-27 spot check settled
 

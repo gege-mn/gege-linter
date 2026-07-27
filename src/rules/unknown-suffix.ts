@@ -1,5 +1,5 @@
 import { cp, FVS, isDigit, isMongolLetter, MVS, NNBSP, prevBaseCp } from '../chars.js';
-import { suffixes } from '../data/suffixes.js';
+import { spaceParticles, suffixes } from '../data/suffixes.js';
 import type { Diagnostic, Rule } from '../types.js';
 
 /** Dictionary entries with pre-split sequences, longest first for greedy matching. */
@@ -67,6 +67,29 @@ export const unknownSuffix: Rule = {
         j++;
       }
       const run = cps.slice(i + 1, j);
+
+      // A connector in front of something that is a whole word, not a suffix.
+      // Naming it beats reporting an unknown suffix: the reader's answer on
+      // 2026-07-27 for four of the six commonest runs in a real corpus was
+      // "real word — takes a plain space, never a connector", and a message
+      // that says so tells them what to do about it.
+      //
+      // The fix is offered only after MVS. After NNBSP, `nnbsp-legacy` already
+      // corrects the connector to a space over a span inside this one, and two
+      // fixes overlapping the same code points would corrupt `applyFixes`.
+      const word = spaceParticles.find((e) => e.sequence === run.join(''));
+      if (word !== undefined) {
+        out.push({
+          rule: 'unknown-suffix',
+          severity: 'warning',
+          message: `‘${word.sequence}’ (${word.cyrillic}) is a separate word, not a suffix — it takes a plain space, never a connector`,
+          start: conn === MVS ? i : i + 1,
+          end: j,
+          ...(conn === MVS ? { fix: ` ${word.sequence}` } : {}),
+        });
+        continue;
+      }
+
       // A run that is a dictionary suffix once stray FVS are dropped gets a
       // mechanical fix — particle shaping is automatic after the connector,
       // so the FVS is at best redundant (real case: gege.mn's ᠤ+FVS1+ᠳ).

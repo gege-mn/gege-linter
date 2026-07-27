@@ -1,3 +1,4 @@
+import { doubledAe } from './rules/doubled-ae.js';
 import { fusableStack } from './rules/fusable-stack.js';
 import { fvsPlacement } from './rules/fvs-placement.js';
 import { mvsContext } from './rules/mvs-context.js';
@@ -13,6 +14,7 @@ export type { SuffixCategory, SuffixEntry } from './data/suffixes.js';
 export { suffixes } from './data/suffixes.js';
 export type { Diagnostic, Rule, Severity } from './types.js';
 export {
+  doubledAe,
   fusableStack,
   fvsPlacement,
   mvsContext,
@@ -33,6 +35,7 @@ export const rules: readonly Rule[] = [
   zwjZwnj,
   nnbspLegacy,
   unknownSuffix,
+  doubledAe,
   nonInitialO,
   fusableStack,
 ];

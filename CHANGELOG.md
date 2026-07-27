@@ -8,6 +8,12 @@ it does.
 
 ### Added
 
+- **`doubled-ae`** (warning, **no fix**) — adjacent ᠠᠠ or ᠡᠡ. Long a/e take
+  the γ/g hiatus and are never doubled, so a pair is Cyrillic аа/ээ copied
+  letter for letter. No mechanical fix because the two populations behind it
+  want different repairs: a reflexive that should be ᠢᠶᠠᠨ/ᠢᠶᠡᠨ, and the
+  vocative, which is a single ᠠ/ᠡ written as its own word. ᠣᠣ (short o) and
+  ᠤᠤ/ᠦᠦ (question particles) are untouched. Fires on 88 of 35,320 harvest rows.
 - **`fusable-stack`** (info, **no fix**) — an analytic (задлаг) case +
   reflexive stack that has a registered fused (нийлэг) equivalent: ᠳᠤ + ᠪᠠᠨ
   may also be written ᠳᠠᠭᠠᠨ, ᠳᠦ + ᠪᠡᠨ as ᠳᠡᠭᠡᠨ, and likewise for ᠲᠤ/ᠲᠦ and
@@ -33,6 +39,16 @@ it does.
 
 ### Changed
 
+- **`unknown-suffix` recognises a connector in front of a whole word.** When
+  the run after the connector is one of `spaceParticles`, the message now says
+  so — "‘ᠦᠭᠡᠢ’ (үгүй) is a separate word, not a suffix — it takes a plain
+  space, never a connector" — instead of reporting an unknown suffix, and
+  carries a fix swapping the connector for a space. Offered **only after MVS**:
+  after NNBSP, `nnbsp-legacy` already corrects the connector over a span inside
+  this one, and two fixes overlapping the same code points would corrupt
+  `applyFixes`. Once mongol-bichig ships the four space-joined words a reader
+  ruled on 2026-07-27 (ᠰᠢᠭ, ᠤᠷᠤᠭᠤ, ᠰᠠᠨ/ᠰᠡᠨ), this covers 202 more corpus hits
+  with no further change here.
 - **`fvs-placement` messages now name what the selector landed on** — e.g.
   "FVS1 (U+180B) follows FVS1 (U+180B)". A doubled selector previously read as
   a complaint about the visible letter before it, and a reader ruled the one

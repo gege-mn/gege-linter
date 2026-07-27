@@ -99,6 +99,7 @@ mechanical, a `fix` replacement string.
 | `zwj-zwnj` | warning | ZWJ/ZWNJ beside a Mongolian letter — running text never needs them (emoji sequences are left alone) |
 | `nnbsp-legacy` | warning | NNBSP joining two Mongolian letters — the pre-16.0 suffix connector; fix: MVS |
 | `unknown-suffix` | warning | MVS- (or legacy NNBSP-) joined letter run not in the curated 63-entry Hudum suffix dictionary (`references/suffixes.md` in the mongol-bichig skill); the separated final a/e (ᠬᠠᠷ‑ᠠ) is exempt |
+| `doubled-ae` | warning | Adjacent ᠠᠠ / ᠡᠡ — long a/e take the γ/g hiatus, never a doubled vowel, so this is Cyrillic аа/ээ copied letter for letter. No fix: the reflexive wants ᠢᠶᠠᠨ/ᠢᠶᠡᠨ and the vocative wants a single ᠠ/ᠡ as its own word. ᠣᠣ (short o) and ᠤᠤ/ᠦᠦ are untouched |
 | `non-initial-o` | info | O/Ö (U+1823/U+1825) past the first syllable — dumb vowel-position heuristic; loanwords (ᠹᠣᠲᠣ) and lexical exceptions (ᠭᠣᠣᠯ) are legitimate, but ᠮᠣᠩᠭᠣᠯ is a real hit — write ᠮᠣᠩᠭᠤᠯ |
 | `fusable-stack` | info | An analytic case + reflexive stack (ᠳᠤ + ᠪᠠᠨ) that may also be written as one fused suffix (ᠳᠠᠭᠠᠨ). Both are correct, so it carries **no fix** — the fused sequence is named in the message instead |
 
