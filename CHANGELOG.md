@@ -2,9 +2,11 @@
 
 ## Unreleased
 
-Not released: the new rule fires on text that is already correct, so whether
-that ships by default is the owner's call. A 0.4.0 minor is the right shape if
-it does.
+Shaped as a 0.4.0 minor: two rules added, one narrowed, and one deliberately
+kept out of the default set. Ordering note — `unknown-suffix`'s new
+separate-word message and three of the rulings below only take effect once
+`@gege-mn/mongol-bichig` ships its 2026-07-27 registry additions, so publish
+that first.
 
 ### Added
 
@@ -14,7 +16,7 @@ it does.
   want different repairs: a reflexive that should be ᠢᠶᠠᠨ/ᠢᠶᠡᠨ, and the
   vocative, which is a single ᠠ/ᠡ written as its own word. ᠣᠣ (short o) and
   ᠤᠤ/ᠦᠦ (question particles) are untouched. Fires on 88 of 35,320 harvest rows.
-- **`fusable-stack`** (info, **no fix**) — an analytic (задлаг) case +
+- **`fusableStack`** (info, **no fix**, **not in the default rule set**) — an analytic (задлаг) case +
   reflexive stack that has a registered fused (нийлэг) equivalent: ᠳᠤ + ᠪᠠᠨ
   may also be written ᠳᠠᠭᠠᠨ, ᠳᠦ + ᠪᠡᠨ as ᠳᠡᠭᠡᠨ, and likewise for ᠲᠤ/ᠲᠦ and
   ᠠᠴᠠ/ᠡᠴᠡ. Both spellings are correct, which is why it carries no mechanical
@@ -23,7 +25,10 @@ it does.
   stack including its leading connector, so a consumer that wants one-click
   apply builds connector + sequence over that span. Requested by a bichig
   reader; 538 analytic stacks in 4,000 sentences of real bichig and **zero**
-  fused forms anywhere in that corpus.
+  fused forms anywhere in that corpus. It is exported but left out of `rules`,
+  because it is the only rule that reports text which is *right*, and 538 hits
+  per 4,000 correct sentences is how a tool teaches people to ignore it. Opt in
+  with `lint(text, [...rules, fusableStack])`; the CLI and CI never see it.
 - `test/rulings.test.ts` — the verdicts a bichig reader returned on a
   28-item random spot check (seed 161294890). Confirmed 4 of 4 on
   `nnbsp-legacy`'s NNBSP→MVS swap, on `wrong-block`'s U+1888→ᠬ / U+1889→ᠭ, and
@@ -49,6 +54,20 @@ it does.
   `applyFixes`. Once mongol-bichig ships the four space-joined words a reader
   ruled on 2026-07-27 (ᠰᠢᠭ, ᠤᠷᠤᠭᠤ, ᠰᠠᠨ/ᠰᠡᠨ), this covers 202 more corpus hits
   with no further change here.
+- **`zwj-zwnj` now flags a joiner only *between* two Mongolian letters.** It
+  previously flagged any joiner adjacent to one, on the premise that running
+  text never needs them. The core spec says otherwise: 16.0 §13.5 sanctions
+  ZWJ/ZWNJ for "select[ing] a particular positional form of a letter in
+  isolation" and tabulates the sequences — `<1820 200D>` initial, `<200D 1820>`
+  final, `<200D 1820 200D>` medial. That is how bichig writes **abbreviations**:
+  ЗХУ is each letter followed by ZWJ and U+1802, the joiner holding an initial
+  form that would otherwise go final before the punctuation. A bichig reader
+  confirmed most sources write them that way. **All 85 joiners in 35,320
+  harvested words and 4,000 sentences are that pattern** — the rule was 100%
+  false positives and now reports none of them. A joiner between two letters is
+  still flagged (FVS1–4 is the registered mechanism for a form override, and the
+  spec warns that older documentation ordered ZWJ and FVS the other way round);
+  the corpus contains no instance of that. Emoji sequences were never affected.
 - **`fvs-placement` messages now name what the selector landed on** — e.g.
   "FVS1 (U+180B) follows FVS1 (U+180B)". A doubled selector previously read as
   a complaint about the visible letter before it, and a reader ruled the one

@@ -25,8 +25,23 @@ Tier 1 — pure sequence checks, no data files — ALL DONE (2026-07-23):
    U+1878 (chart-classified "Buryat letter", Unicode 11.0 — Hudum-sphere)
    deliberately not flagged. U+1879 ALTERNATE UE is pipeline-limbo
    (accepted 2025, reverted 2026) — treat as unassigned, may return.
-6. `zwj-zwnj` — DONE. Flagged only when adjacent to a Mongolian letter, so
-   emoji ZWJ sequences never false-positive → warning.
+6. `zwj-zwnj` — DONE. Flagged only **between** two Mongolian letters →
+   warning, so emoji sequences never false-positive and neither does the
+   abbreviation pattern (below).
+
+   Narrowed 2026-07-27, from "adjacent to a Mongolian letter". The core spec
+   (16.0 §13.5) sanctions the joiners for "select[ing] a particular positional
+   form of a letter in isolation" and tabulates them — `<1820 200D>` initial,
+   `<200D 1820>` final, `<200D 1820 200D>` medial. That is exactly how bichig
+   writes abbreviations: ЗХУ is each letter followed by ZWJ and U+1802, the
+   joiner holding an initial form that would otherwise go final before the
+   punctuation. A reader confirmed most sources write them so. **All 85
+   joiners in the corpus are that pattern** — the rule was 100% false
+   positives and is now silent on every one. What remains flagged, a joiner
+   *between* letters, occurs zero times in the corpus; FVS1–4 is the
+   registered mechanism for a form override, and the spec notes older
+   documentation ordered ZWJ and FVS the other way round, so a mid-word
+   joiner is more likely legacy debris than intent.
 
 Bonus (user request, 2026-07-23): `non-initial-o` — DONE. Dumb
 vowel-position heuristic at info severity: O/Ö (U+1823/1825) after the
@@ -58,6 +73,13 @@ real bichig and 76 in 31,320 words — with **zero** fused forms anywhere in
 the corpus. Whatever the reason writers avoid the fused form, they are not
 choosing it, and a linter that only ever complains would never tell them it
 exists.
+
+**Exported but not in `rules`** (owner's ruling, 2026-07-27). It is the only
+rule that reports text which is *right*, and 538 hits per 4,000 sentences of
+correct writing is how a tool teaches people to ignore its output. Opt in with
+`lint(text, [...rules, fusableStack])`, or run it alone for an editor panel
+that wants the hint — the /type pad is the intended consumer. The CLI and CI
+never see it.
 
 Tier 2 — data-driven (the data lives in `@gege-mn/mongol-bichig`):
 7. `unknown-suffix` — DONE. Connector followed by a sequence not in the
@@ -129,22 +151,26 @@ Open, in rough order of how much corpus they move:
   It appears in the registry only inside ᠳᠠᠬᠢ/ᠳᠡᠬᠢ. 208 of the 977
   unknown-suffix warnings that survive a full fix pass are this one sequence.
   The addition belongs in **mongol-bichig**, not here.
-- **ᠳᠠᠬᠢ/ᠳᠡᠬᠢ: reader and reference disagree.** `suffixes.md` lists them as
-  registry-confirmed fused suffixes taking MVS; the reader says дахь/дэх is a
-  separate word taking a plain space. Unresolved — settle it in mongol-bichig
-  against the source, not by editing either side here.
-- **`non-initial-o` fires on loanwords.** Both info hits were ruled "loanword,
-  should be exempt", with the general rule stated: foreign words may carry o/ö
-  after the first syllable. Partially fixable — рационализмаар carries ᠼ
-  (U+183C), a foreign-only letter — but лантаноид is spelled entirely with
-  native letters and cannot be detected this way. Severity stays info.
-- **`fvs-placement`'s error severity is unconfirmed.** The one error in the
-  whole corpus (редакторлах, a doubled FVS1) was ruled a false alarm — but on
-  a misreading, because the old message did not say the selector had landed on
-  another selector. The message now names what it landed on; re-ask before
-  changing severity.
-- **`zwj-zwnj` is unruled.** Both draws were abbreviations (ЗХУ, ЕХ) with ZWJ
-  holding a non-final form before U+1802. The reader could not rule on them.
+- **ᠳᠠᠬᠢ/ᠳᠡᠬᠢ: settled for the reference.** `suffixes.md` lists them as
+  registry-confirmed fused suffixes taking MVS; the reader first said дахь/дэх
+  is a separate word taking a plain space, then on re-ask ruled "keep it —
+  sources win" (2026-07-27). The connector spelling stays silent.
+- **`non-initial-o` fires on loanwords — and will keep doing so.** Both info
+  hits were ruled "loanword, should be exempt", with the general rule stated:
+  foreign words may carry o/ö after the first syllable. Decided 2026-07-27 not
+  to act on it: keying off a foreign-only letter would clear рационализмаар
+  (which carries ᠼ, U+183C) and still miss лантаноид, spelled entirely with
+  native letters. Inconsistency for no coverage. The false positives are
+  affordable only because the severity is info, so that must not change.
+- **`fvs-placement` stays at error severity** (re-asked and settled
+  2026-07-27). The one error in the whole corpus — редакторлах, a doubled FVS1
+  — was first ruled a false alarm, but on a misreading: the old message did not
+  say the selector had landed on another selector. A selector following a
+  selector modifies nothing, which makes it structurally invalid rather than a
+  matter of orthographic taste.
+- **`zwj-zwnj` was ruled and the rule narrowed** (2026-07-27): "most sources do
+  use ZWJ", and the core spec agrees. See rule 6 above — 85 of 85 corpus hits
+  were false positives.
 - **Rule 8 has real-world evidence now.** холтосныхоо, агаар мандал дахь… and
   Магадгүй… all write the genitive ᠤ as a separate token after a plain U+0020,
   and the linter says nothing. Not rare in the corpus.
@@ -163,7 +189,8 @@ about shared data. Verdicts are in `test/rulings.test.ts`.
 **The decisive source is L2/17-036 Appendix IV**, "Mongolian suffixes as
 connected by NNBSP" — the 2017 proposal that produced U+180F, by Eck, West,
 Sanlig, Siqinbilige and Ou Rileke. It is the only enumerated connector
-inventory anyone has published. Diffing its 57 entries against our 63:
+inventory anyone has published. Diffing its 57 entries against the 63 we then
+had (68 after the additions below):
 
 - **ᠬᠢ (U+182C U+1822) and ᠬᠢᠨ are in it**, under "case-bound possession" —
   independently confirming the reader. ᠬᠢᠨ is the -ныхан of лууныхан.
@@ -193,6 +220,28 @@ word, so "belongs on the stem" fits the evidence better than "separate word".
 argument is a trap — Cyrillic writes нь, минь, чинь and даа as separate words
 while bichig connects all four, and they are in our registry already. Cyrillic
 spacing is not evidence about bichig spacing.
+
+Every one of those was closed on 2026-07-27, three of them by re-asking:
+
+- **ᠰᠠᠨ was mis-optioned, and the reader named why.** Two morphemes are
+  identical in Cyrillic: the past-tense participle, "attached to the word as
+  гсан or гсэн", and a wish/regret modal — "тэгэх юм сан" — written apart. The
+  sources and the ruling were describing different words. Only the modal is
+  registered; the participle lives inside the word and needs no entry.
+- **ᠯᠠ/ᠯᠡ ships on the ruling despite the missing source**, because the failure
+  mode is asymmetric: registering it only makes the linter *silent* on those
+  465 hits, since nothing yet objects to the space spelling. Wrong here means
+  under-reporting, never a fabricated error, and reversal is one registry line.
+- **ᠤᠷᠤᠭᠤ keeps its warning and its fix** — re-asked with the Appendix IV
+  hedge spelled out, and ruled to keep them anyway. This is the one place the
+  linter is knowingly stricter than a published source. 65 corpus hits.
+- **The vocative takes a plain space**, single ᠠ/ᠡ: a second deliberate dissent
+  from Appendix IV, which writes it with the connector. The reader also
+  explained where the corpus's doubled vowels come from — Cyrillic requires
+  "аав аа" with a space, "but many people writing just smush them together, so
+  it's hard to distinguish if 'ааваа' means abu-ban or abu a". The ambiguity is
+  created in Cyrillic and then transliterated letter for letter, which is
+  precisely why `doubled-ae` can carry no fix.
 
 **Do not expect a standard to settle these.** MLREQ states the principle and
 gives no inventory; UTN #57's particle dictionary governs *shaping*, not

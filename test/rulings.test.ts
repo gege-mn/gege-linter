@@ -130,10 +130,15 @@ describe('rulings / unknown-suffix — the registry gaps behind the warnings', (
   // @gege-mn/mongol-bichig's connectorSuffixes, which reaches the converter too.
   it.todo('accepts bare ᠬᠢ after a connector once mongol-bichig registers it');
 
-  // Ruled "i'd say it's a word, so regular space, no mvs. it's like дахь дэх in
-  // cyrillic writing" — but suffixes.md lists ᠳᠠᠬᠢ/ᠳᠡᠬᠢ as registry-confirmed
-  // fused suffixes taking MVS. Reader and reference disagree; unresolved.
-  it.todo('decides whether ᠳᠠᠬᠢ/ᠳᠡᠬᠢ is a connector suffix or a space-joined word');
+  // First ruled "i'd say it's a word, so regular space, no mvs. it's like дахь
+  // дэх in cyrillic writing", against suffixes.md, which lists ᠳᠠᠬᠢ/ᠳᠡᠬᠢ as
+  // registry-confirmed fused suffixes taking MVS. Re-asked 2026-07-27 and
+  // settled the other way — "Keep it — sources win" — so the connector spelling
+  // stays silent.
+  it('accepts ᠳᠠᠬᠢ and ᠳᠡᠬᠢ after a connector, the registry over the first ruling', () => {
+    expect(ruleNames('ᠭᠠᠵᠠᠷ\u180Eᠳᠠᠬᠢ')).toEqual([]);
+    expect(ruleNames('ᠭᠡᠷ\u180Eᠳᠡᠬᠢ')).toEqual([]);
+  });
 });
 
 describe('rulings / non-initial-o — loanwords are false positives', () => {
@@ -141,8 +146,16 @@ describe('rulings / non-initial-o — loanwords are false positives', () => {
   // stated outright: "foreign words can display O/Ö after first syllable".
   // рационализмаар carries ᠼ (U+183C), a foreign-only letter, so it is
   // detectable; лантаноид is spelled entirely with native letters and is not.
-  it.todo('exempts words carrying a foreign-only letter from non-initial-o');
-  it.todo('лантаноид stays a known false positive — nothing in it marks the word foreign');
+  //
+  // Decided 2026-07-27: no exemption. Keying off a foreign-only letter would
+  // clear рационализмаар and still miss лантаноид — inconsistency bought for no
+  // coverage. Both stay known false positives, which is affordable precisely
+  // because the rule can only ever be info.
+  it('leaves the loanword false positives in place, at info severity', () => {
+    const ds = lint('ᠮᠣᠩᠭᠣᠯ').filter((d) => d.rule === 'non-initial-o');
+    expect(ds).toHaveLength(1);
+    expect(ds[0]?.severity).toBe('info');
+  });
 });
 
 describe('rulings / fvs-placement', () => {
@@ -167,19 +180,31 @@ describe('rulings / fvs-placement', () => {
   // Open: the reader's substantive point is that a redundant selector has "0
   // effect", which argues about severity, not placement. Re-ask with the new
   // message before changing anything.
-  it.todo('re-ask whether a doubled FVS deserves error severity or warning');
+  // Re-asked 2026-07-27 and settled: it stays an error. A selector that follows
+  // a selector modifies nothing, so its placement is structurally invalid — not
+  // a matter of orthographic taste, which is what warning severity is for.
+  it('keeps a doubled FVS at error severity', () => {
+    const ds = lint('ᠷᠧᠳ\u180B\u180Bᠠᠻᠲ\u180Bᠣᠷᠯᠠᠬᠤ').filter((d) => d.rule === 'fvs-placement');
+    expect(ds[0]?.severity).toBe('error');
+  });
 });
 
-describe('rulings / zwj-zwnj — unruled', () => {
+describe('rulings / zwj-zwnj — the abbreviation pattern, ruled 2026-07-27', () => {
   // Both draws were abbreviations punctuated with U+1802: ЗХУ and ЕХ, each
   // letter followed by ZWJ to hold a non-final form before the Mongolian comma.
-  // The reader could not rule ("what is this?"), so the question stands and the
-  // rule is unchanged.
-  it('still flags ZWJ next to a Mongolian letter in the ЗХУ abbreviation pattern', () => {
-    expect(ruleNames('ᠵᠢ\u200D᠂ᠬᠤ\u200D᠂ᠤ\u200D')).toEqual(['zwj-zwnj']);
+  // Re-asked and ruled: "most sources do use ZWJ." The core spec agrees —
+  // 16.0 §13.5 says ZWJ/ZWNJ "may be used to select a particular positional
+  // form of a letter in isolation", and lists <1820 200D> for the initial
+  // form. The rule flagged all 85 joiners in the harvest corpus and every one
+  // was this pattern, so it was 100% false positives. It now flags only a
+  // joiner *between* two letters — a case the corpus never contains.
+  it('accepts the ЗХУ abbreviation pattern', () => {
+    expect(ruleNames('ᠵᠢ\u200D᠂ᠬᠤ\u200D᠂ᠤ\u200D')).toEqual([]);
   });
 
-  it.todo('re-ask: is ZWJ legitimate for holding a non-final form in a punctuated abbreviation?');
+  it('still flags a joiner between two letters, where FVS is the mechanism', () => {
+    expect(ruleNames('ᠠ\u200Dᠯ')).toEqual(['zwj-zwnj']);
+  });
 });
 
 describe('rulings / gaps the samples exposed', () => {
@@ -192,8 +217,11 @@ describe('rulings / gaps the samples exposed', () => {
   // 28 of the surviving unknown-suffix runs in the word corpus are ᠠᠠ or ᠡᠡ.
   // orthography.md: long a/e are never doubled, they take the γ/g hiatus, so
   // adjacent U+1820 U+1820 or U+1821 U+1821 is a typo or a letter-for-letter
-  // Cyrillic artifact. Confirmed once, in өтгөнөө above.
-  it.todo('doubled-ae: adjacent ᠠᠠ / ᠡᠡ anywhere, not just after a connector');
+  // Cyrillic artifact. Confirmed once, in өтгөнөө above; `doubled-ae` shipped.
+  it('doubled-ae fires with no connector in front of the pair', () => {
+    // Synthetic — the only claim under test is that a connector is not needed.
+    expect(lint('ᠨᠡᠷᠡᠡ').some((d) => d.rule === 'doubled-ae')).toBe(true);
+  });
 });
 
 describe('rulings / sequence check — the six residual runs, 2026-07-27', () => {
@@ -218,30 +246,48 @@ describe('rulings / sequence check — the six residual runs, 2026-07-27', () =>
   // CASE (may or may not use NNBSP)" — explicitly optional — and Wiktionary's
   // руу entry notes that "due to its recent development as a grammatical case,
   // directive case suffixes are written with a space between the stem and
-  // suffix". A space is right; a connector is not an error either.
-  it.todo('treats ᠤᠷᠤᠭᠤ as space-joined, with the connector tolerated');
+  // suffix". So a connector is tolerated by the only source that lists it.
+  //
+  // Re-asked 2026-07-27 with that conflict spelled out; ruled "keep the warning
+  // and the fix". This is the one place the linter is knowingly stricter than a
+  // published source, on the reader's authority. 65 corpus hits.
+  it.todo('ᠤᠷᠤᠭᠤ warns with a fix to a plain space, once mongol-bichig ships it');
 
   // Ruled "not valid Mongolian", with the reason: "just single a/e does the job
   // of аа/ээ and it is to be written as a separate word with full space… this
   // specific a/e is for calling people or calling things." Appendix IV confirms
   // the substance — its VOCATIVE CASE entry is a *single* ᠠ / ᠡ — but writes it
-  // with the connector, not a space. So the doubled form is settled wrong; the
-  // connector-versus-space question for the single form is not.
-  it.todo('flags doubled ᠠᠠ / ᠡᠡ anywhere as the Cyrillic artifact it is (doubled-ae)');
-  it.todo('re-ask: does the vocative single ᠠ/ᠡ take a plain space or the connector?');
+  // with the connector, not a space. Re-asked 2026-07-27: "let's just use
+  // regular space with singular a or e" — a second deliberate dissent from
+  // Appendix IV, alongside ᠤᠷᠤᠭᠤ above. The reader added why the doubled form
+  // is so common in harvested text: Cyrillic requires "аав аа" / "ээж ээ" with
+  // a space, "but many people writing just smush them together, so it's hard to
+  // distinguish if 'ааваа' means abu-ban or abu a" — i.e. the ambiguity is
+  // introduced in Cyrillic and then transliterated letter for letter. That is
+  // also why `doubled-ae` can carry no fix: the two readings want different
+  // repairs. `doubled-ae` ships and settles the doubled form.
+  it.todo('space-before-suffix must not flag a plain space before a lone ᠠ/ᠡ (vocative)');
 
-  // Ruled "real word, plain space" — but the option may not fit what this is.
-  // The sources point at "belongs on the stem": -сан is the verb past-tense
-  // suffix, written attached (CeLCAR "Past tense: -сан4"), which in bichig is
-  // part of the word as ᠭᠰᠠᠨ; and юмсан is one Cyrillic word, юм + сан
-  // (Wiktionary). Neither reading is a space-separated word. Re-ask.
-  it.todo('re-ask ᠰᠠᠨ: stem-attached participle and юмсан clitic, not a space-joined word');
+  // Re-asked, and the reader separated two morphemes that are identical in
+  // Cyrillic: "сан/сэн/сон/сөн = past time suffixes, attached to the word as
+  // гсан or гсэн. the other one (which was provided in the 6 questions) сан сэн
+  // written separately, and expresses sort of wish or regret 'тэгэх юм сан'."
+  // So the sources and the ruling were describing different things. Only the
+  // modal is registered, as a space-joined word; the participle is inside the
+  // word as ᠭᠰᠠᠨ and needs no entry at all. A connector-split ᠰᠠᠨ is wrong
+  // under either reading, which is what the 15 corpus hits are.
+  it.todo('ᠰᠠᠨ/ᠰᠡᠨ (the modal) is named a separate word once mongol-bichig ships it');
 
   // NOT VALIDATED, and the reader flagged their own uncertainty. Nothing lists
   // ᠯᠠ/ᠯᠡ either way. Wiktionary has л as a Mongolian particle, but that cuts
   // both ways: the registry ALREADY carries particles Cyrillic writes
   // separately and bichig connects — ᠨᠢ/ᠮᠢᠨᠢ/ᠴᠢᠨᠢ (нь, минь, чинь) and ᠳᠠ/ᠳᠡ
   // (даа), which CeLCAR groups in the same word class as л. Cyrillic spacing is
-  // therefore not evidence for bichig spacing. Needs a real source.
-  it.todo('ᠯᠠ / ᠯᠡ is unresolved — 465 corpus hits and no source either way');
+  // therefore not evidence for bichig spacing. Still needs a real source.
+  //
+  // Shipped anyway on the ruling, 2026-07-27, because the failure mode is
+  // asymmetric: registering it only makes the linter *silent* on those 465
+  // hits, since no rule yet objects to the space spelling. Being wrong here
+  // under-reports; it never invents an error. Reversal is one registry line.
+  it.todo('accepts ᠯᠠ/ᠯᠡ after a connector once mongol-bichig registers it');
 });

@@ -26,7 +26,16 @@ export {
   zwjZwnj,
 };
 
-/** Every built-in rule: structural errors, then legacy/compat warnings, then hints. */
+/**
+ * The default rule set: structural errors, then legacy/compat warnings, then
+ * hints. Every rule here reports text that is *wrong*.
+ *
+ * `fusableStack` is deliberately absent. It reports correct text — an analytic
+ * suffix stack that has an equally correct fused spelling — so it is opt-in:
+ * `lint(text, [...rules, fusableStack])`, or on its own for an editor that
+ * wants the hint. In a CLI or CI run it would be 538 lines of noise per 4,000
+ * sentences about nothing being wrong.
+ */
 export const rules: readonly Rule[] = [
   mvsContext,
   fvsPlacement,
@@ -37,7 +46,6 @@ export const rules: readonly Rule[] = [
   unknownSuffix,
   doubledAe,
   nonInitialO,
-  fusableStack,
 ];
 
 /** Lint Mongolian-script text; diagnostics come back sorted by position. */

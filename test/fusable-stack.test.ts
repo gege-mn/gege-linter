@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyFixes, fusableStack, lint } from '../src/index.js';
+import { applyFixes, fusableStack, lint, rules } from '../src/index.js';
 
 const MVS = '\u180E';
 const NNBSP = '\u202F';
@@ -69,6 +69,13 @@ describe('fusable-stack', () => {
   });
 
   it('is only a hint — it never raises the CLI exit severity', () => {
-    expect(lint(nerDuBan).every((d) => d.severity !== 'error')).toBe(true);
+    expect(lint(nerDuBan, [fusableStack]).every((d) => d.severity !== 'error')).toBe(true);
+  });
+
+  it('is opt-in: the default rule set stays silent on a correct analytic stack', () => {
+    // It reports text that is *right*, so it is exported but not in `rules`.
+    // The owner ruled on 2026-07-27 that a CLI/CI run must not carry it.
+    expect(lint(nerDuBan)).toHaveLength(0);
+    expect(lint(nerDuBan, [...rules, fusableStack])).toHaveLength(1);
   });
 });
