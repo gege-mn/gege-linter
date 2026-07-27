@@ -93,9 +93,27 @@ describe('cli', () => {
     expect(result.stdout).toContain('nnbsp-legacy');
   });
 
-  it('--list-rules prints every registered rule', () => {
+  it('refuses a file that is not valid UTF-8, and --fix leaves its bytes alone', () => {
+    // Decoding with 'utf8' turns every invalid byte into U+FFFD; writing that
+    // back would destroy bytes the linter never diagnosed, and report success.
+    const bytes = Buffer.concat([Buffer.from(legacy, 'utf8'), Buffer.from([0xc3, 0x28, 0xff])]);
+    const path = join(mkdtempSync(join(tmpdir(), 'gege-linter-')), 'latin1.txt');
+    writeFileSync(path, bytes);
+
+    const result = runCli(['--fix', path]);
+    expect(result.code).toBe(2);
+    expect(result.stderr).toContain('not valid UTF-8');
+    expect(readFileSync(path).equals(bytes)).toBe(true);
+  });
+
+  it('--list-rules keeps stdout a bare list and notes the opt-in rule on stderr', () => {
     const result = runCli(['--list-rules']);
+    // stdout is the contract a script reads: one rule name per line, nothing
+    // else. fusableStack is not in `rules` and the CLI never runs it, so the
+    // mention that it exists goes to stderr instead.
     expect(result.stdout.split('\n')).toEqual(rules.map((r) => r.name));
+    expect(result.stderr).toContain('fusable-stack');
+    expect(result.code).toBe(0);
   });
 
   it('rejects unknown options with exit 2', () => {

@@ -2,8 +2,36 @@
 import { readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
-import { applyFixes, lint, rules } from './index.js';
-import type { Diagnostic, Severity } from './types.js';
+import { applyFixes, fusableStack, lint, rules } from './index.js';
+import type { Diagnostic, Rule, Severity } from './types.js';
+
+/**
+ * Rules the library exports but leaves out of `rules`, because they report
+ * text that is already correct. The CLI never runs them — it is listed so
+ * that a reader of `--list-rules` learns the rule exists at all, and how to
+ * reach it.
+ */
+const OPT_IN: readonly Rule[] = [fusableStack];
+
+/**
+ * Decode bytes as UTF-8, strictly.
+ *
+ * `readFileSync(path, 'utf8')` maps every invalid byte to U+FFFD without
+ * complaint, and `--fix` then writes those replacements back over the
+ * original — silent, irreversible loss of bytes the linter never diagnosed,
+ * reported as a success. Legacy Mongolian text is exactly the material likely
+ * to arrive in some other encoding, so a file that does not round-trip is
+ * refused rather than read.
+ */
+function decodeUtf8(bytes: Buffer): string {
+  const text = bytes.toString('utf8');
+  if (!Buffer.from(text, 'utf8').equals(bytes)) {
+    throw new Error(
+      'not valid UTF-8 — re-encode it first (refusing to read, --fix would corrupt it)',
+    );
+  }
+  return text;
+}
 
 const HELP = `Usage: gege-linter [options] <file...>
 
@@ -13,7 +41,8 @@ legacy Unicode usage. Reads the given files, or stdin when the file is "-".
 Options:
   --fix          apply mechanical fixes (rewrites files; stdin prints to stdout)
   --json         machine-readable output (code-point offsets plus line/col)
-  --list-rules   print the built-in rule names and exit
+  --list-rules   print the rules this CLI runs, one per line, and exit
+                 (library-only rules are noted on stderr)
   -h, --help     show this help
   -v, --version  print the version
 
@@ -183,7 +212,15 @@ export function runCli(argv: readonly string[], io: CliIo = {}): CliResult {
     };
     return { code: 0, stdout: pkg.version, stderr: '' };
   }
-  if (opts.listRules) return { code: 0, stdout: rules.map((r) => r.name).join('\n'), stderr: '' };
+  if (opts.listRules) {
+    // stdout stays exactly the rules this CLI runs, one bare name per line, so
+    // a script reading it keeps working. The opt-in note goes to stderr, where
+    // a human still sees it in a terminal.
+    const note = OPT_IN.map(
+      (r) => `gege-linter: ${r.name} is available to library callers but never run by the CLI`,
+    ).join('\n');
+    return { code: 0, stdout: rules.map((r) => r.name).join('\n'), stderr: note };
+  }
   if (opts.files.length === 0) return { code: 2, stdout: '', stderr: HELP };
   const usesStdin = opts.files.includes('-');
   if (usesStdin && opts.fix && opts.json) {
@@ -198,8 +235,8 @@ export function runCli(argv: readonly string[], io: CliIo = {}): CliResult {
     try {
       text =
         path === '-'
-          ? (io.readStdin ?? (() => readFileSync(0, 'utf8')))()
-          : readFileSync(path, 'utf8');
+          ? (io.readStdin ?? (() => decodeUtf8(readFileSync(0))))()
+          : decodeUtf8(readFileSync(path));
     } catch (e) {
       ioErrors.push(
         scrubControls(

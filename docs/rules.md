@@ -83,7 +83,8 @@ never see it.
 
 Tier 2 — data-driven (the data lives in `@gege-mn/mongol-bichig`):
 7. `unknown-suffix` — DONE. Connector followed by a sequence not in the
-   63-entry `connectorSuffixes` registry (warn, not error).
+   `connectorSuffixes` registry (warn, not error). No count is quoted here:
+   it moves whenever mongol-bichig publishes.
 8. `space-before-suffix` — plain U+0020 before a known suffix ("did you mean
    MVS?") — the exact bug found by hand in gege.mn's footer. The package
    already ships what this needs: `spaceParticles` is the whitelist — a space

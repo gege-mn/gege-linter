@@ -28,8 +28,8 @@
  *                                    [--corpus ../gege-converter/.tmp]
  */
 
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   cpRow,
@@ -380,6 +380,8 @@ const html = renderPage({
   blockTitle: `LINT SPOT CHECK ANSWERS (seed ${SEED})`,
 });
 
+// .tmp/ is gitignored, so it is absent on a fresh clone.
+mkdirSync(dirname(resolve(ROOT, OUT)), { recursive: true });
 writeFileSync(resolve(ROOT, OUT), html);
 const sidecar = `${OUT.replace(/\.html?$/, '')}.json`;
 writeFileSync(resolve(ROOT, sidecar), `${JSON.stringify({ seed: SEED, asked }, null, 2)}\n`);

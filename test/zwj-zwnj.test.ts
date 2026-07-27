@@ -20,7 +20,15 @@ describe('zwj-zwnj', () => {
     expect(lint(`ᠠ${ZWJ}`, [zwjZwnj])).toHaveLength(0);
     expect(lint(`${ZWJ}ᠠ`, [zwjZwnj])).toHaveLength(0);
     expect(lint(`${ZWJ}ᠠ${ZWJ}`, [zwjZwnj])).toHaveLength(0);
-    expect(lint(`${ZWNJ}ᠡ`, [zwjZwnj])).toHaveLength(0);
+  });
+
+  it('gives ZWNJ no boundary pass — at an edge it selects nothing', () => {
+    // The spec sentence names both characters, but the tabulated sequences,
+    // the abbreviation pattern and all 85 corpus hits are ZWJ's. A letter at a
+    // word edge is already non-joining there, so a boundary ZWNJ is redundant.
+    expect(lint(`${ZWNJ}ᠡ`, [zwjZwnj])).toHaveLength(1);
+    expect(lint(`ᠠᠪ${ZWNJ}`, [zwjZwnj])).toHaveLength(1);
+    expect(lint(`ᠠᠪ${ZWNJ}᠂`, [zwjZwnj])).toHaveLength(1);
   });
 
   it('allows the abbreviation pattern — letter + ZWJ before a Mongolian comma', () => {

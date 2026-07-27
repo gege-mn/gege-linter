@@ -98,7 +98,7 @@ mechanical, a `fix` replacement string.
 | `wrong-block` | warning | Todo / Sibe / Manchu / Ali Gali letters in Hudum text; known look-alikes (U+1888/U+1889) get a mechanical fix |
 | `zwj-zwnj` | warning | ZWJ/ZWNJ *between* two Mongolian letters — FVS1–4 is the mechanism for a form override. At a word boundary a joiner is selecting a positional form in isolation, which the core spec sanctions and abbreviations (ЗХУ) rely on, so it is left alone — as are emoji sequences |
 | `nnbsp-legacy` | warning | NNBSP joining two Mongolian letters — the pre-16.0 suffix connector; fix: MVS |
-| `unknown-suffix` | warning | MVS- (or legacy NNBSP-) joined letter run not in the curated Hudum suffix dictionary (`references/suffixes.md` in the mongol-bichig skill); a run that is a *separate word* is named as one, with a fix to a plain space; the separated final a/e (ᠬᠠᠷ‑ᠠ) is exempt |
+| `unknown-suffix` | warning | MVS- (or legacy NNBSP-) joined letter run not in the curated Hudum suffix dictionary (`references/suffixes.md` in the mongol-bichig skill); a run that is a *separate word* is named as one, with a fix to a plain space (after MVS only — after NNBSP `nnbsp-legacy` already fixes an overlapping span); the separated final a/e (ᠬᠠᠷ‑ᠠ) is exempt |
 | `doubled-ae` | warning | Adjacent ᠠᠠ / ᠡᠡ — long a/e take the γ/g hiatus, never a doubled vowel, so this is Cyrillic аа/ээ copied letter for letter. No fix: the reflexive wants ᠢᠶᠠᠨ/ᠢᠶᠡᠨ and the vocative wants a single ᠠ/ᠡ as its own word. ᠣᠣ (short o) and ᠤᠤ/ᠦᠦ are untouched |
 | `non-initial-o` | info | O/Ö (U+1823/U+1825) past the first syllable — dumb vowel-position heuristic; loanwords (ᠹᠣᠲᠣ) and lexical exceptions (ᠭᠣᠣᠯ) are legitimate, but ᠮᠣᠩᠭᠣᠯ is a real hit — write ᠮᠣᠩᠭᠤᠯ |
 
@@ -107,7 +107,7 @@ reports text that is already correct:
 
 | Rule | Severity | What it flags |
 | --- | --- | --- |
-| `fusableStack` | info | An analytic case + reflexive stack (ᠳᠤ + ᠪᠠᠨ) that may also be written as one fused suffix (ᠳᠠᠭᠠᠨ). Both are correct, so it carries **no fix** — the fused sequence is named in the message instead |
+| `fusable-stack` | info | An analytic case + reflexive stack (ᠳᠤ + ᠪᠠᠨ) that may also be written as one fused suffix (ᠳᠠᠭᠠᠨ). Both are correct, so it carries **no fix** — the fused sequence is named in the message instead |
 
 ```ts
 import { fusableStack, lint, rules } from '@gege-mn/gege-linter';

@@ -23,8 +23,8 @@
  *                                         [--corpus ../gege-converter/.tmp]
  */
 
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { cpRow, esc, optionBlock, renderPage } from './lib/review-page.mjs';
 
@@ -258,6 +258,8 @@ const html = renderPage({
   extraStyle: true,
 });
 
+// .tmp/ is gitignored, so it is absent on a fresh clone.
+mkdirSync(dirname(resolve(ROOT, OUT)), { recursive: true });
 writeFileSync(resolve(ROOT, OUT), html);
 console.log(`wrote ${OUT}  (${SEQUENCES.length} sequences, ${covered}% of ${allUnknown} warnings)`);
 for (const s of SEQUENCES) {
