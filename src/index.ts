@@ -1,3 +1,4 @@
+import { compatPunctuation } from './rules/compat-punctuation.js';
 import { doubledAe } from './rules/doubled-ae.js';
 import { fusableStack } from './rules/fusable-stack.js';
 import { fvsPlacement } from './rules/fvs-placement.js';
@@ -14,6 +15,7 @@ export type { SuffixCategory, SuffixEntry } from './data/suffixes.js';
 export { suffixes } from './data/suffixes.js';
 export type { Diagnostic, Rule, Severity } from './types.js';
 export {
+  compatPunctuation,
   doubledAe,
   fusableStack,
   fvsPlacement,
@@ -43,6 +45,7 @@ export const rules: readonly Rule[] = [
   wrongBlock,
   zwjZwnj,
   nnbspLegacy,
+  compatPunctuation,
   unknownSuffix,
   doubledAe,
   nonInitialO,

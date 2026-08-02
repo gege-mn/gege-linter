@@ -1,5 +1,70 @@
 # Changelog
 
+## 0.5.0 — 2026-08-02
+
+One rule added. **No `@gege-mn/mongol-bichig` version gate this time** — unlike
+0.4.0, nothing here reads the suffix registry, so the existing `^0.2.0` range
+is sufficient and a lockfile pinned at 0.2.0 loses nothing.
+
+### Added
+
+- **`compat-punctuation`** (in the default rule set) — punctuation encoded as
+  a *presentation form* rather than as a character. Two tiers:
+
+  - **warning, always fixable** — any of the 69 mapped code points in Vertical
+    Forms (U+FE10–FE1F), CJK Compatibility Forms (U+FE30–FE4F) or Small Form
+    Variants (U+FE50–FE6F).
+  - **info, fixable** — U+3001/U+3002 and halfwidth U+FF61/U+FF64 inside Hudum
+    text, which core spec 13.5 assigns to Todo and Sibe rather than Hudum. This
+    tier is silent unless the text really contains Hudum letters, since those
+    marks are correct in Chinese.
+
+  Two sources converge from opposite directions. Unicode 16.0 core spec
+  §6.2.14: the Vertical Forms block holds "compatibility characters needed for
+  round-trip mapping to the Chinese standard, GB 18030", and "the preferred
+  Unicode approach … is to simply use the nominal characters that correspond to
+  these vertical variants. Then, at display time, the appropriate glyph is
+  selected according to the line orientation." UTN #57 §2.3.1 makes it a
+  *shaping* claim: vertical forms of punctuation are phase IB, "critical to the
+  proper setting of Mongolian text, but … not part of the complex shaping
+  between letters and format controls" — the vertical glyph is the font's job,
+  and encoding it as a code point takes that job away.
+
+  The lookup table is generated from each character's own UCD compatibility
+  decomposition and machine-checked code point by code point, then overridden
+  where Mongolian has a mark of its own or a source names a target:
+
+  | Mark | Target | Why |
+  |---|---|---|
+  | comma, full stop, ellipsis | ᠂ ᠃ ᠁ (U+1802/1803/1801) | core spec 13.5 names these as the traditional Mongolian marks |
+  | question mark | ？ (U+FF1F) | UTN #57 Table 1 lists the CJK question mark among required characters |
+  | exclamation mark | `!` (U+0021) | no source requires a fullwidth one |
+  | everything else | nominal character | the UCD decomposition |
+
+  **The sentence-final pair is deliberately asymmetric — ？ but `!`.** Only the
+  question mark has a source requiring a CJK form; core spec 13.5 mentions
+  exclamation marks only among the "Western punctuation marks" that modern
+  Mongolian "may use". A test pins both targets so the asymmetry is not tidied
+  away later. U+FE51 is routed to ᠂ rather than to its nominal U+3001 so one
+  `--fix` pass cannot leave text the info tier immediately re-flags.
+
+  **Deliberately not flagged: ASCII `,` `.` `?` `!` in bichig text** — 13.5
+  sanctions Western punctuation outright. The rule only ever moves text *off* a
+  presentation form. Also out of scope: U+1807/1808/1809, the Sibe/Manchu
+  marks, which belong with `wrong-block`.
+
+  Worth knowing before relying on the ？ target: it is formally just the wide
+  variant of ASCII (`<wide> 003F`), and **NFKC maps ？ to `?` exactly as it maps
+  ︖ to `?`**. It is the only target in the table a normalizing step can undo;
+  ᠂ ᠃ ᠁ and `!` are all NFKC-stable.
+
+  **Fires on 0 of the 35,320 harvest rows.** That is a clean false-positive
+  result, not evidence of value — the corpus is punctuation-poor (its only
+  marks are U+202F, ZWJ, ᠂ and nirugu, with no full stop or question mark
+  anywhere), so it can neither confirm nor refute real-world incidence. The
+  rule targets text pasted out of legacy Chinese and Inner Mongolian systems,
+  which that corpus is not.
+
 ## 0.4.0 — 2026-07-27
 
 Two rules added, one narrowed, one deliberately kept out of the default set,

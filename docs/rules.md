@@ -131,6 +131,71 @@ mechanical and both with a fix:
     35,320 harvest rows and on none of the four words the reader confirmed
     clean.
 
+12. `compat-punctuation` — DONE (2026-08-02, user request). Punctuation
+    encoded as a *presentation form* rather than as a character. Two tiers in
+    one rule, because the sources are not equally strong:
+
+    - **warning, always fixable** — any code point from Vertical Forms
+      (U+FE10–FE1F), CJK Compatibility Forms (U+FE30–FE4F) or Small Form
+      Variants (U+FE50–FE6F). 69 entries.
+    - **info, fixable, guarded on the text containing a Hudum letter** —
+      U+3001/U+3002 and their halfwidth twins U+FF61/U+FF64 → ᠂/᠃.
+
+    Two independent sources say the same thing from opposite directions.
+    Core spec 16.0 §6.2.14: the Vertical Forms block holds "compatibility
+    characters needed for round-trip mapping to the Chinese standard, GB
+    18030", and "the preferred Unicode approach … is to simply use the
+    nominal characters"; §6.2.1 repeats it for vertical text specifically.
+    UTN #57 §2.3.1 makes it a *shaping* claim: vertical forms of punctuation
+    are phase IB, "critical to the proper setting of Mongolian text, but …
+    not part of the complex shaping between letters and format controls" —
+    i.e. the vertical glyph is the font's job. Encoding it as a code point
+    also breaks normalization: **NFKC maps U+FE16 to bare `?`, not to
+    U+FF1F**, so a normalizing pipeline destroys the distinction entirely.
+
+    Fix targets, and why they are not simply the UCD decomposition: the table
+    is generated from each character's own compatibility decomposition and
+    then overridden three ways. Comma, full stop and ellipsis go to the
+    native ᠂ ᠃ ᠁ (U+1802/1803/1801) — owner's call, 2026-08-02, and core spec
+    13.5 lists exactly those as the traditional Mongolian marks. The question
+    mark goes to U+FF1F on UTN #57 Table 1, which lists the CJK question mark
+    among the required characters. U+FE51 is routed to ᠂ rather than to its
+    nominal U+3001 so a single `--fix` pass cannot leave text that the info
+    tier immediately re-flags.
+
+    **The sentence-final pair is deliberately asymmetric — ？ but `!`**
+    (settled 2026-08-02). Only the *question* mark has a source requiring a
+    CJK form: UTN #57 Table 1. Nothing requires a fullwidth exclamation, and
+    core spec 13.5 mentions exclamation marks only among the "Western
+    punctuation marks" that modern Mongolian "may use" — so U+FE15 and U+FE57
+    both resolve to plain ASCII `!`. The earlier ！ (U+FF01) mapping rested
+    on nothing but symmetry with ？ plus mongol-bichig's `orthography.md`
+    recording practice as ？！, which is an observation about practice, not a
+    requirement. `test/compat-punctuation.test.ts` pins both targets so the
+    asymmetry cannot be quietly tidied away.
+
+    Worth knowing when revisiting: ？ is formally just the *wide variant of
+    ASCII* — U+FF1F decomposes `<wide> 003F`, and **NFKC maps ？ to `?` just
+    as it maps ︖ to `?`**. So any normalizing step downstream erases the
+    distinction the question-mark mapping creates, and the text lands on
+    ASCII anyway — which 13.5 sanctions. The fullwidth target only survives
+    a pipeline that does not normalize.
+
+    **Deliberately not flagged: ASCII `,` `.` `?` `!` in bichig text.** The
+    13.5 sentence above sanctions Western punctuation outright, so rewriting
+    it would be inventing a rule. This one only ever moves text *off* a
+    presentation form. Also out of scope: U+1807/1808/1809, the Sibe/Manchu
+    marks — that is the separate `wrong-script-punctuation` candidate in
+    mongol-bichig's `orthography.md`, and it belongs with `wrong-block`.
+
+    **Fires on 0 of 35,320 harvest rows.** That is a false-positive result,
+    not evidence of value: the corpus is punctuation-poor — its only marks
+    are U+202F (10,465), ZWJ (42), ᠂ (31) and nirugu (4), with no full stop
+    and no question mark anywhere. The rule targets text pasted out of
+    legacy Chinese/Inner Mongolian systems, which this corpus is not, so it
+    can neither confirm nor refute real-world incidence. Safe to ship in the
+    default set; still unmeasured.
+
 ## What the 2026-07-27 spot check settled
 
 28 items drawn at random from 31,320 words + 4,000 sentences of raw Tungaamal
