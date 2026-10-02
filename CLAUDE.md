@@ -41,7 +41,7 @@ there. Same rule in gege-converter and mongol-bichig.
   rule is `{ name, check(text): Diagnostic[] }`, a pure function, and offers a
   `fix` string whenever the correction is mechanical.
 - **Looking right proves nothing.** NNBSP- and MVS-joined suffixes shape
-  byte-identically in Noto v3.002; only the bytes differ. Every check reads
+  byte-identically in Noto v3.100 (as in v3.002); only the bytes differ. Every check reads
   code points, never rendering. Corollary for review: bichig cannot be judged
   from terminal output — render to HTML in the gitignored `.tmp/` instead.
 

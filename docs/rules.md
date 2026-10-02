@@ -96,9 +96,9 @@ Tier 2 — data-driven (the data lives in `@gege-mn/mongol-bichig`):
    over a span *inside* this one, and two fixes overlapping the same code
    points would corrupt `applyFixes`.
 9. `fvs-unregistered` — (letter, FVS) pair not in SVS/UTN #57 tables.
-   Blocked on vendoring mongfontbuilder's `variants.json` **into
-   mongol-bichig** (open item recorded in that repo's `sources.md`), not
-   here. **Validate against mongfontbuilder, not UCD
+   `variants.json` is vendored in mongol-bichig (`vendor/mongfontbuilder/`,
+   v0.13.0, 2026-10-02) but not yet compiled into the package — still blocked
+   on that repo exporting a per-letter MNG table, not on anything here. **Validate against mongfontbuilder, not UCD
    `StandardizedVariants.txt`** — neither is a superset of the other, and the
    core spec itself calls the UCD list defective. The Hudum valid-FVS table
    is in mongol-bichig's `references/variation-sequences.md`.
