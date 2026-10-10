@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.6.0 — 2026-10-10
+
+Two functions added, no rule changed: every diagnostic is what it was in 0.5.0.
+
+### Changed
+
+- **`applyFixes` is linear.** It spliced each fix into the array, which is
+  quadratic once fixes change the length: 1 MB of text dense with stray-FVS
+  suffixes took 5.6 s to fix against 0.19 s to lint. Output is unchanged for
+  fixes that do not overlap, which is every set `lint` returns.
+
+### Added
+
+- **`tungaamalToUnicode(text)`** — rewrites text typed with the Tungaamal
+  keyboard as standard Unicode Hudum. No new rule and no new mapping: it is
+  the existing fixes in the one safe order, `wrong-block`'s U+1888 → ᠬ and
+  U+1889 → ᠭ first, then `nnbsp-legacy` and `unknown-suffix` judged on the
+  corrected letters. A single `applyFixes(text, lint(text))` gets a particle spelled
+  with the look-alike wrong — ᠦ\u1889ᠡᠢ after NNBSP is joined with MVS where
+  ᠦᠭᠡᠢ takes a plain space. Encoding only; Tungaamal's spellings are left as
+  written.
+- **`isTungaamal(text)`** — the guard for it: either look-alike present and no
+  other Ali Gali letter (U+1880–18AA) in the text, so a real Ali Gali passage
+  is not taken for Tungaamal's and rewritten.
+
 ## 0.5.0 — 2026-08-02
 
 One rule added. **No `@gege-mn/mongol-bichig` version gate this time** — unlike

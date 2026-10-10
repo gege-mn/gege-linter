@@ -88,6 +88,28 @@ const fixed = applyFixes(text, diagnostics); // code-point-safe — never String
 Every diagnostic carries **code-point offsets** and, when the correction is
 mechanical, a `fix` replacement string.
 
+#### Text typed with Tungaamal
+
+```ts
+import { isTungaamal, tungaamalToUnicode } from '@gege-mn/gege-linter';
+
+if (isTungaamal(text)) text = tungaamalToUnicode(text); // standard Unicode Hudum
+```
+
+Tungaamal's output is the Mongolian block plus two substitutions — feminine k
+and g as the Ali Gali look-alikes U+1888/U+1889 — on the pre-Unicode-16
+connector model. `tungaamalToUnicode` corrects the letters first and the
+connectors second, which a single `applyFixes(text, lint(text))` cannot: a particle still
+spelled with U+1889 is not recognised, and gets a connector where it takes a
+space. It changes encoding, never spelling, and nothing but those two things:
+punctuation and whatever else `lint` reports are left for `lint`.
+
+Use it only on text known to be Tungaamal's — real Ali Gali uses those two
+letters in their own right. `isTungaamal` is that test: either look-alike
+present, and no other Ali Gali letter anywhere in the text. It is `false` for
+Tungaamal text that happens to contain no feminine k or g, which nothing
+distinguishes from other legacy text; `lint` still reports that.
+
 ## Rules
 
 | Rule | Severity | What it flags |

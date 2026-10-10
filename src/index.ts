@@ -59,14 +59,78 @@ export function lint(text: string, active: readonly Rule[] = rules): Diagnostic[
 /**
  * Apply the mechanical `fix` replacements to `text`, working in code-point
  * space — diagnostic offsets are code points, so `String.slice` (UTF-16)
- * would corrupt text containing astral characters. Fixes are applied
- * back-to-front so earlier offsets stay valid.
+ * would corrupt text containing astral characters. The result is built in one
+ * forward pass, so a long text with many fixes stays linear.
  */
 export function applyFixes(text: string, diagnostics: readonly Diagnostic[]): string {
   const cps = [...text];
   const fixable = diagnostics.filter((d): d is Diagnostic & { fix: string } => d.fix !== undefined);
-  for (const d of [...fixable].sort((a, b) => b.start - a.start)) {
-    cps.splice(d.start, d.end - d.start, d.fix);
+  const out: string[] = [];
+  let at = 0;
+  for (const d of [...fixable].sort((a, b) => a.start - b.start)) {
+    out.push(cps.slice(at, d.start).join(''), d.fix);
+    at = Math.max(at, d.end);
   }
-  return cps.join('');
+  out.push(cps.slice(at).join(''));
+  return out.join('');
+}
+
+const TUNGAAMAL_K = 0x1888;
+const TUNGAAMAL_G = 0x1889;
+
+/**
+ * Whether `text` carries Tungaamal's signature: the Ali Gali look-alikes
+ * U+1888/U+1889 standing in for feminine k and g, and no other Ali Gali
+ * letter anywhere.
+ *
+ * The second half is what keeps real Ali Gali out. There U+1888 is the vowel
+ * I and U+1889 the consonant KA, two characters of a 43-character set, and a passage
+ * that uses them reaches for the rest of the set too; Tungaamal never emits
+ * any of the others.
+ *
+ * It answers only for text that has a feminine k or g in it. Tungaamal text
+ * without one is indistinguishable from any other pre-Unicode-16 text, and is
+ * `false` here.
+ */
+export function isTungaamal(text: string): boolean {
+  let found = false;
+  for (const ch of text) {
+    const c = ch.codePointAt(0) ?? 0;
+    if (c === TUNGAAMAL_K || c === TUNGAAMAL_G) found = true;
+    else if (c >= 0x1880 && c <= 0x18aa) return false;
+  }
+  return found;
+}
+
+/**
+ * Rewrite text typed with the Tungaamal keyboard as standard Unicode Hudum.
+ *
+ * Tungaamal's output is not a private encoding: it is the Mongolian block plus
+ * two substitutions and the pre-Unicode-16 connector model, and each of those
+ * already has a mechanical fix in a rule. This is those fixes in the one order
+ * that is safe for them:
+ *
+ * 1. **The letters.** Feminine k and g come out as the Ali Gali look-alikes
+ *    U+1888/U+1889 (masculine uses the standard QA/GA), and `wrong-block`
+ *    maps them to U+182C/U+182D.
+ * 2. **The connectors**, judged on the corrected letters — NNBSP to MVS, or to
+ *    a plain space before a particle, and stray FVS off suffix heads.
+ *
+ * One pass is not enough, which is why this is a function and not a recipe.
+ * Both suffix rules compare against a dictionary spelled with the standard
+ * letters, so a suffix or particle still carrying U+1889 is not recognised:
+ * ᠦᢉᠡᠢ after NNBSP gets MVS where the particle ᠦᠭᠡᠢ takes a plain space.
+ *
+ * **Only for text known to be Tungaamal's** — `isTungaamal` is the test. Real
+ * Ali Gali uses U+1888 and U+1889 as letters in their own right and would be
+ * rewritten for good.
+ *
+ * Encoding only. Tungaamal also *spells* some words differently (`sayin` for
+ * сайн, detached case particles); that is orthography, not Unicode, and is
+ * left exactly as written. So is everything the other rules report —
+ * punctuation above all, which is not Tungaamal's to answer for.
+ */
+export function tungaamalToUnicode(text: string): string {
+  const letters = applyFixes(text, lint(text, [wrongBlock]));
+  return applyFixes(letters, lint(letters, [nnbspLegacy, unknownSuffix]));
 }
