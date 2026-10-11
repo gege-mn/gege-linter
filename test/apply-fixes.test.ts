@@ -16,6 +16,6 @@ describe('applyFixes', () => {
   });
 
   it('ignores diagnostics without a fix', () => {
-    expect(applyFixes('ᠮᠣᠩᠭᠣᠯ', lint('ᠮᠣᠩᠭᠣᠯ'))).toBe('ᠮᠣᠩᠭᠣᠯ');
+    expect(applyFixes('ᠣᠷᠣᠨ', lint('ᠣᠷᠣᠨ'))).toBe('ᠣᠷᠣᠨ');
   });
 });

@@ -1,6 +1,7 @@
 import { cp, isDigit, isMongolLetter, MVS, NNBSP, prevBaseCp } from '../chars.js';
 import { spaceParticles } from '../data/suffixes.js';
 import type { Diagnostic, Rule } from '../types.js';
+import { detachedAt } from './detached-suffix.js';
 
 /** ᠤᠤ/ᠦᠦ/ᠪᠦᠦ/ᠦᠭᠡᠢ, longest first so ᠦᠭᠡᠢ wins over a shorter prefix. */
 const PARTICLES = spaceParticles
@@ -27,8 +28,11 @@ const particleAt = (cps: readonly string[], j: number): boolean =>
  * connector. Emitting MVS there just trades a legacy bug for a current one —
  * and it is a live case, not a hypothetical: Tungaamal writes
  * ᠦᠭᠡᠢ<NNBSP>ᠦᠦ in ordinary text.
+ *
+ * Silent where `detached-suffix` reports the connector: its fix deletes the
+ * NNBSP, and a second fix on the same code point would corrupt `applyFixes`.
  */
-export const nnbspLegacy: Rule = {
+const make = (formal: boolean): Rule => ({
   name: 'nnbsp-legacy',
   check(text) {
     const out: Diagnostic[] = [];
@@ -38,6 +42,7 @@ export const nnbspLegacy: Rule = {
       const base = prevBaseCp(cps, i);
       if (!isMongolLetter(base) && !isDigit(base)) continue;
       if (!isMongolLetter(cp(cps[i + 1]))) continue;
+      if (detachedAt(cps, i, formal) !== undefined) continue;
       const beforeParticle = particleAt(cps, i + 1);
       out.push({
         rule: 'nnbsp-legacy',
@@ -52,4 +57,9 @@ export const nnbspLegacy: Rule = {
     }
     return out;
   },
-};
+});
+
+export const nnbspLegacy: Rule = make(false);
+
+/** `nnbspLegacy` for a rule set that runs `detachedSuffixFormal`. */
+export const nnbspLegacyFormal: Rule = make(true);

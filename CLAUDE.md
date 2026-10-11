@@ -2,8 +2,8 @@
 
 `@gege-mn/gege-linter` (bin: `gege-linter`) — lints traditional Mongolian
 script (Mongol bichig) text for incorrect or legacy Unicode usage. Public API:
-`lint`, `applyFixes`, `rules`, per-rule exports, `isTungaamal`,
-`tungaamalToUnicode`, types. The CLI is done;
+`lint`, `applyFixes`, `rules`, `formalRules`, `rulesFor`, per-rule exports, `isTungaamal`,
+`tungaamalToUnicode`, `isMenksoft`, `menksoftToUnicode`, types. The CLI is done;
 `runCli` is exported for tests.
 
 Born out of ~/Projects/gege.mn — its first consumer, via the /type pad's

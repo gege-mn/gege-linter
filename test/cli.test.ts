@@ -116,6 +116,25 @@ describe('cli', () => {
     expect(result.code).toBe(0);
   });
 
+  it('--mode formal reports and fixes the endings that formal documents attach', () => {
+    // nom + MVS + tai: a style choice by default, attached in formal mode.
+    const joined = `\u1828\u1823\u182e${MVS}\u1832\u1820\u1822`;
+    expect(runCli([tmpFile(joined)]).stdout).toBe('');
+    for (const args of [['--mode', 'formal'], ['--mode=formal']]) {
+      const result = runCli([...args, tmpFile(joined)]);
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('detached-suffix');
+    }
+    const path = tmpFile(joined);
+    runCli(['--fix', '--mode', 'formal', path]);
+    expect(readFileSync(path, 'utf8')).toBe('\u1828\u1823\u182e\u1832\u1820\u1822');
+  });
+
+  it('rejects an unknown or missing mode with exit 2', () => {
+    expect(runCli(['--mode', 'legal', tmpFile(fixed)]).code).toBe(2);
+    expect(runCli(['--mode']).code).toBe(2);
+  });
+
   it('rejects unknown options with exit 2', () => {
     expect(runCli(['--nope']).code).toBe(2);
   });

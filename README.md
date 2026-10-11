@@ -69,6 +69,7 @@ pnpm dlx @gege-mn/gege-linter file.txt        # lint (or: npx @gege-mn/gege-lint
 gege-linter --fix file.txt                    # apply mechanical fixes in place
 gege-linter --json file.txt                   # machine-readable output
 cat file.txt | gege-linter --fix - > out.txt  # stdin; fixed text on stdout
+gege-linter --mode formal contract.txt        # formal documents (see Modes)
 ```
 
 Exit codes: `0` clean or warnings only · `1` error-severity findings ·
@@ -104,6 +105,25 @@ spelled with U+1889 is not recognised, and gets a connector where it takes a
 space. It changes encoding, never spelling, and nothing but those two things:
 punctuation and whatever else `lint` reports are left for `lint`.
 
+#### Text in the Menksoft encoding
+
+```ts
+import { isMenksoft, menksoftToUnicode } from '@gege-mn/gege-linter';
+
+if (isMenksoft(text)) text = menksoftToUnicode(text); // standard Unicode Hudum
+```
+
+Menksoft text is Private Use Area glyphs (U+E234–E34F), one code point per
+letter shape. `menksoftToUnicode` reads them back as letters with a port of
+suragch's [`mongol_code`](https://github.com/suragch/mongol_code) (CC0), then
+applies this package's own fixes to the result: a particle gets a plain space
+instead of a connector, and vertical presentation forms become ordinary
+punctuation. Hudum only. `isMenksoft` is `true` when a Menksoft letter is
+present and no Private Use Area code point lies outside the band. `no-pua`
+offers the same reading as a fix, run by run.
+
+#### Tungaamal, continued
+
 Use it only on text known to be Tungaamal's — real Ali Gali uses those two
 letters in their own right. `isTungaamal` is that test: either look-alike
 present, and no other Ali Gali letter anywhere in the text. It is `false` for
@@ -117,6 +137,8 @@ distinguishes from other legacy text; `lint` still reports that.
 | `mvs-context` | error | MVS not sitting between two Mongolian letters — structurally broken; fonts render a visible nominal glyph |
 | `fvs-placement` | error | FVS1–4 not immediately after the Mongolian letter it modifies (a doubled FVS fails the same test) |
 | `no-pua` | error | Private Use Area code points — Menksoft-era glyph encoding, tofu everywhere else; contiguous runs report once |
+| `detached-suffix` | error | The habitual verbal ending ᠳᠠᠭ / ᠳᠡᠭ (-даг/-дэг) after a suffix connector (MVS or legacy NNBSP). It is always written attached to the stem; fix: delete the connector, and the MVS of a separated final a/e before it |
+| `detached-suffix` | warning | **Formal mode only.** The comitative ᠲᠠᠢ / ᠲᠡᠢ (-тай/-тэй) and the ordinals ᠳᠤᠭᠠᠷ / ᠳᠦᠭᠡᠷ (-дугаар/-дүгээр), ᠳᠠᠬᠢ / ᠳᠡᠬᠢ (-дахь/-дэх) after a connector. Same fix. Never reported after a digit |
 | `wrong-block` | warning | Todo / Sibe / Manchu / Ali Gali letters in Hudum text; known look-alikes (U+1888/U+1889) get a mechanical fix |
 | `zwj-zwnj` | warning | ZWJ/ZWNJ *between* two Mongolian letters — FVS1–4 is the mechanism for a form override. At a word boundary a joiner is selecting a positional form in isolation, which the core spec sanctions and abbreviations (ЗХУ) rely on, so it is left alone — as are emoji sequences |
 | `nnbsp-legacy` | warning | NNBSP joining two Mongolian letters — the pre-16.0 suffix connector; fix: MVS |
@@ -138,6 +160,26 @@ import { fusableStack, lint, rules } from '@gege-mn/gege-linter';
 
 lint(text, [...rules, fusableStack]); // opt in to the style hint
 ```
+
+## Modes
+
+The comitative -тай/-тэй and the ordinals -дугаар/-дүгээр, -дахь/-дэх may be
+joined to the stem with a connector or attached to it: a matter of style in
+ordinary text, which the default mode leaves alone. Legal and other formal
+documents attach them, and formal mode reports the connector-joined spelling
+as a warning with a fix.
+
+```ts
+import { applyFixes, formalRules, lint } from '@gege-mn/gege-linter';
+
+const diagnostics = lint(text, formalRules); // or rulesFor('formal')
+const attached = applyFixes(text, diagnostics);
+```
+
+On the command line it is `--mode formal`. `formalRules` is `rules` with two
+rules swapped for their formal variants, `detachedSuffixFormal` and
+`nnbspLegacyFormal`; use the two together when building a rule list by hand,
+because the first deletes connectors the plain `nnbspLegacy` would rewrite.
 
 The suffix dictionary itself ships as part of the public API (`suffixes`),
 sourced from school grammar, UTN #57, and the mongfontbuilder registry.

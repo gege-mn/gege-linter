@@ -1,6 +1,7 @@
 import { cp, FVS, isDigit, isMongolLetter, MVS, NNBSP, prevBaseCp } from '../chars.js';
 import { spaceParticles, suffixes } from '../data/suffixes.js';
 import type { Diagnostic, Rule } from '../types.js';
+import { detachedAt } from './detached-suffix.js';
 
 /** Dictionary entries with pre-split sequences, longest first for greedy matching. */
 const entries = suffixes
@@ -43,6 +44,8 @@ export const unknownSuffix: Rule = {
       const base = prevBaseCp(cps, i);
       if (!isMongolLetter(base) && !isDigit(base)) continue;
       if (!isMongolLetter(cp(cps[i + 1]))) continue;
+      // detached-suffix owns these whether or not the dictionary lists them.
+      if (detachedAt(cps, i, false) !== undefined) continue;
       if (
         (cps[i + 1] === 'ᠠ' || cps[i + 1] === 'ᠡ') &&
         !isMongolLetter(cp(cps[afterFvs(cps, i + 2)]))

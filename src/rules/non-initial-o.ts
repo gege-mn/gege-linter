@@ -5,6 +5,14 @@ const O = 'ᠣ';
 const OE = 'ᠥ';
 
 /**
+ * Words a bichig reader has ruled on: the later O is a misspelling, never a
+ * loan or a name, so the U is safe to write for them. Spelled without FVS.
+ * Everything else stays a hint — a loanword, a proper noun and a slip look
+ * the same from here.
+ */
+const SETTLED: ReadonlySet<string> = new Set(['ᠮᠣᠩᠭᠣᠯ', 'ᠰᠣᠳᠣᠪᠢᠯᠢᠭ']);
+
+/**
  * Dumb static vowel-position check: in native Hudum orthography O/Ö appear
  * only in a word's first syllable — later round vowels are written U/Ü.
  *
@@ -17,13 +25,31 @@ const OE = 'ᠥ';
  * Info severity on purpose all the same: loanwords keep their o (ᠹᠣᠲᠣ,
  * ᠻᠢᠨᠣ) and a few native words are genuine lexical exceptions — ᠭᠣᠣᠯ has a
  * doubled short o. So this stays a "look here" hint, never an error.
+ *
+ * The fix is offered only inside a `SETTLED` word.
  */
+/** The letters of the stem around `i`, FVS dropped: back and forward to a non-letter. */
+const stemFrom = (cps: readonly string[], i: number): string => {
+  const part = (ch: string | undefined): ch is string =>
+    ch !== undefined && (isMongolLetter(cp(ch)) || FVS.has(ch));
+  let a = i;
+  while (part(cps[a - 1])) a--;
+  let b = i;
+  while (part(cps[b])) b++;
+  return cps
+    .slice(a, b)
+    .filter((ch) => !FVS.has(ch))
+    .join('');
+};
+
 export const nonInitialO: Rule = {
   name: 'non-initial-o',
   check(text) {
     const out: Diagnostic[] = [];
     const cps = [...text];
     let vowelSeen = false;
+    let settled = false;
+    let inPrev = false;
     for (let i = 0; i < cps.length; i++) {
       const ch = cps[i];
       if (ch === undefined) continue;
@@ -32,8 +58,11 @@ export const nonInitialO: Rule = {
         isMongolLetter(c) || ch === MVS || ch === NNBSP || ch === NIRUGU || FVS.has(ch);
       if (!inWord) {
         vowelSeen = false;
+        inPrev = false;
         continue;
       }
+      if (!inPrev) settled = SETTLED.has(stemFrom(cps, i));
+      inPrev = true;
       if (!isVowel(c)) continue;
       if ((ch === O || ch === OE) && vowelSeen) {
         out.push({
@@ -43,6 +72,7 @@ export const nonInitialO: Rule = {
             'O/Ö (U+1823/U+1825) normally occurs only in the first syllable — later syllables use U/Ü (U+1824/U+1826); loanwords and a few lexical exceptions are fine',
           start: i,
           end: i + 1,
+          ...(settled ? { fix: ch === O ? 'ᠤ' : 'ᠦ' } : {}),
         });
       }
       vowelSeen = true;

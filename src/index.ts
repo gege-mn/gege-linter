@@ -1,9 +1,13 @@
+import { MVS } from './chars.js';
+import { convertMenksoftToUnicode } from './menksoft/convert.js';
+import * as Menksoft from './menksoft/menksoft.js';
 import { compatPunctuation } from './rules/compat-punctuation.js';
+import { detachedSuffix, detachedSuffixFormal } from './rules/detached-suffix.js';
 import { doubledAe } from './rules/doubled-ae.js';
 import { fusableStack } from './rules/fusable-stack.js';
 import { fvsPlacement } from './rules/fvs-placement.js';
 import { mvsContext } from './rules/mvs-context.js';
-import { nnbspLegacy } from './rules/nnbsp-legacy.js';
+import { nnbspLegacy, nnbspLegacyFormal } from './rules/nnbsp-legacy.js';
 import { noPua } from './rules/no-pua.js';
 import { nonInitialO } from './rules/non-initial-o.js';
 import { unknownSuffix } from './rules/unknown-suffix.js';
@@ -16,11 +20,14 @@ export { suffixes } from './data/suffixes.js';
 export type { Diagnostic, Rule, Severity } from './types.js';
 export {
   compatPunctuation,
+  detachedSuffix,
+  detachedSuffixFormal,
   doubledAe,
   fusableStack,
   fvsPlacement,
   mvsContext,
   nnbspLegacy,
+  nnbspLegacyFormal,
   nonInitialO,
   noPua,
   unknownSuffix,
@@ -42,6 +49,7 @@ export const rules: readonly Rule[] = [
   mvsContext,
   fvsPlacement,
   noPua,
+  detachedSuffix,
   wrongBlock,
   zwjZwnj,
   nnbspLegacy,
@@ -50,6 +58,20 @@ export const rules: readonly Rule[] = [
   doubledAe,
   nonInitialO,
 ];
+
+/**
+ * `rules` for legal and other formal documents: `detachedSuffix` also reports
+ * the endings that are attached there (-тай, -дугаар, -дахь and their
+ * feminine forms), and `nnbspLegacy` leaves those connectors to it.
+ */
+export const formalRules: readonly Rule[] = rules.map((r) =>
+  r === detachedSuffix ? detachedSuffixFormal : r === nnbspLegacy ? nnbspLegacyFormal : r,
+);
+
+export type Mode = 'default' | 'formal';
+
+/** The rule set for a mode: `lint(text, rulesFor('formal'))`. */
+export const rulesFor = (mode: Mode): readonly Rule[] => (mode === 'formal' ? formalRules : rules);
 
 /** Lint Mongolian-script text; diagnostics come back sorted by position. */
 export function lint(text: string, active: readonly Rule[] = rules): Diagnostic[] {
@@ -132,5 +154,69 @@ export function isTungaamal(text: string): boolean {
  */
 export function tungaamalToUnicode(text: string): string {
   const letters = applyFixes(text, lint(text, [wrongBlock]));
-  return applyFixes(letters, lint(letters, [nnbspLegacy, unknownSuffix]));
+  return applyFixes(letters, lint(letters, [nnbspLegacy, unknownSuffix, detachedSuffix]));
+}
+
+const isPua = (c: number): boolean => c >= 0xe000 && c <= 0xf8ff;
+
+/**
+ * Whether `text` is in the Menksoft glyph encoding: at least one Private Use
+ * Area code point from Menksoft's Hudum letter band, and none from outside
+ * U+E234–E34F.
+ *
+ * The second half is the guard. The same Private Use Area is where Saiyin and
+ * the other glyph fonts put *their* shapes, on different code points, and
+ * where icon fonts live; text with a PUA code point outside the band is not
+ * something `menksoftToUnicode` can read, and is `false` here. Saiyin text
+ * that happens to stay inside the band is indistinguishable, and is `true`.
+ */
+export function isMenksoft(text: string): boolean {
+  let found = false;
+  for (const ch of text) {
+    const c = ch.codePointAt(0) ?? 0;
+    if (!isPua(c)) continue;
+    if (!Menksoft.isMenksoft(c)) return false;
+    if (Menksoft.isLetter(c)) found = true;
+  }
+  return found;
+}
+
+/**
+ * Rewrite text in the Menksoft glyph encoding (Private Use Area,
+ * U+E234–E34F) as standard Unicode Hudum.
+ *
+ * Menksoft text stores the *shape* of every letter — one code point per
+ * positional form — so reading it back is a judgement per glyph on position,
+ * gender and neighbours. That part is a port of suragch's `mongol_code`
+ * (CC0), Menksoft → Unicode direction only, kept faithful to the original.
+ *
+ * Its output is then held to this package's model, because the two differ in
+ * two mechanical places:
+ *
+ * 1. **Particles.** Menksoft's suffix space becomes MVS before any letter.
+ *    `unknown-suffix` knows which of those runs are whole words, and gives
+ *    them the plain space they take.
+ *    A run the suffix dictionary does not know gets the space as well: a
+ *    connector is written only for a suffix that is known to be one.
+ * 2. **Punctuation.** The vertical glyphs map to compatibility presentation
+ *    forms, and `compat-punctuation` writes the ordinary character.
+ * 3. **Spelling**, for the few words `non-initial-o` has a settled answer
+ *    for. Every other later-syllable O is the source's, and is kept.
+ *
+ * Hudum only: Todo, Sibe and Manchu glyphs lie outside the band and are left
+ * as they are, where `no-pua` reports them. **Only for text known to be
+ * Menksoft's** — `isMenksoft` is the test.
+ */
+export function menksoftToUnicode(text: string): string {
+  const unicode = convertMenksoftToUnicode(text);
+  const cps = [
+    ...applyFixes(
+      unicode,
+      lint(unicode, [compatPunctuation, detachedSuffix, unknownSuffix, nonInitialO]),
+    ),
+  ];
+  for (const d of lint(cps.join(''), [unknownSuffix])) {
+    if (d.fix === undefined && cps[d.start - 1] === MVS) cps[d.start - 1] = ' ';
+  }
+  return cps.join('');
 }

@@ -17,8 +17,9 @@ Tier 1 — pure sequence checks, no data files — ALL DONE (2026-07-23):
 3. `fvs-placement` — DONE. FVS1–4 (U+180B–180D, U+180F) not directly after
    a Mongolian letter (doubling fails the same test) → error.
 4. `no-pua` — DONE. U+E000–F8FF, contiguous runs grouped into one
-   diagnostic → error. gege-engine's PUA tables can later power "suggest
-   the Unicode equivalent" fixes.
+   diagnostic → error. A run wholly inside Menksoft's Hudum band
+   (U+E234–E34F) with a letter in it carries its Unicode reading as the fix,
+   from `src/menksoft/` — a port of suragch's `mongol_code` (CC0).
 5. `wrong-block` — DONE. Todo (U+1843–185C) / Sibe (U+185D–1872) / Manchu
    (U+1873–1877) / Ali Gali (U+1880–18AA) in Hudum text → warning; the
    Tungaamal look-alikes U+1888/U+1889 carry mechanical fixes to ᠬ/ᠭ;
@@ -196,6 +197,39 @@ mechanical and both with a fix:
     can neither confirm nor refute real-world incidence. Safe to ship in the
     default set; still unmeasured.
 
+13. `detached-suffix` — DONE (2026-10-11, owner's ruling). A connector (MVS
+    or NNBSP) between a Mongolian-letter stem and an ending that belongs on
+    the stem, where the ending is followed by a non-letter or another
+    connector. Two tiers:
+
+    - **error, always on** — the habitual ᠳᠠᠭ/ᠳᠡᠭ (-даг/-дэг). It has no
+      detached form: явдаг is `yabudaγ`, never `yabu` + MVS + `daγ`. The same
+      holds for verbal endings generally; only this pair is in scope, because
+      it is the one the suffix dictionary lists as connector-joined.
+    - **warning, formal mode only** — the comitative ᠲᠠᠢ/ᠲᠡᠢ and the
+      ordinals ᠳᠤᠭᠠᠷ/ᠳᠦᠭᠡᠷ, ᠳᠠᠬᠢ/ᠳᠡᠬᠢ. Either spelling is correct in
+      ordinary text; legal and other formal documents attach them.
+
+    The fix deletes the connector. A stem ending in a separated final a/e
+    (stem + MVS + vowel) loses that MVS too, since the vowel is medial once a
+    suffix is attached; the diagnostic spans from that MVS to the connector.
+    **After a digit nothing is reported in any mode** — how a suffix joins a
+    digit is unspecified.
+
+    The sequences are **held in the rule**, not read from `connectorSuffixes`:
+    ᠳᠠᠭ/ᠳᠡᠭ are being removed from the dictionary, and a rule about what a
+    connector may *not* introduce cannot depend on a list of what it may.
+
+    One connector, one diagnostic: `nnbsp-legacy` and `unknown-suffix` both
+    ask `detachedAt` and stay silent where this rule reports, so no two fixes
+    touch the same code point. `unknown-suffix` skips ᠳᠠᠭ/ᠳᠡᠭ regardless
+    of the dictionary — `test/detached-suffix-registry.test.ts` runs against
+    a dictionary without them and fails on a double report.
+
+    **Modes** are rule sets, not an option on `lint`: `rules` is the default,
+    `formalRules` (`rulesFor('formal')`) swaps in `detachedSuffixFormal` and
+    `nnbspLegacyFormal`. CLI: `--mode formal`.
+
 ## What the 2026-07-27 spot check settled
 
 28 items drawn at random from 31,320 words + 4,000 sentences of raw Tungaamal
@@ -325,8 +359,8 @@ way.
 
 ## Relationship to gege-engine
 
-~/Projects/gege-engine (uncommitted, unpublished scaffold) models legacy
-*font* encodings — Menksoft PUA / CMs ASCII glyph tables extracted from font
-binaries. Different problem (glyphs, not text validity); do NOT depend on it.
-Its PUA tables become useful only for rule 4's fix suggestions, and would be
-vendored as data if so.
+gege-engine modelled legacy *font* encodings — Menksoft PUA / CMs ASCII glyph
+tables extracted from font binaries, Unicode → glyph. Dropped 2026-10-11;
+it survives only as the private repository `gege-mn/gege-engine`. Do NOT
+depend on it. Rule 4's fix reads Menksoft the other way, glyph → Unicode,
+from `src/menksoft/`.

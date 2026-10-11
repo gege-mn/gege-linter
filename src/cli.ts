@@ -2,7 +2,7 @@
 import { readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
-import { applyFixes, fusableStack, lint, rules } from './index.js';
+import { applyFixes, fusableStack, lint, type Mode, rulesFor } from './index.js';
 import type { Diagnostic, Rule, Severity } from './types.js';
 
 /**
@@ -41,6 +41,8 @@ legacy Unicode usage. Reads the given files, or stdin when the file is "-".
 Options:
   --fix          apply mechanical fixes (rewrites files; stdin prints to stdout)
   --json         machine-readable output (code-point offsets plus line/col)
+  --mode <mode>  default, or formal: legal and other formal documents, where
+                 -тай, -дугаар and -дахь must be attached to the stem
   --list-rules   print the rules this CLI runs, one per line, and exit
                  (library-only rules are noted on stderr)
   -h, --help     show this help
@@ -51,6 +53,7 @@ Exit codes: 0 clean or warnings only · 1 error-severity findings · 2 usage or 
 interface CliOptions {
   fix: boolean;
   json: boolean;
+  mode: Mode;
   listRules: boolean;
   help: boolean;
   version: boolean;
@@ -61,14 +64,21 @@ function parseArgs(argv: readonly string[]): CliOptions | { error: string } {
   const opts: CliOptions = {
     fix: false,
     json: false,
+    mode: 'default',
     listRules: false,
     help: false,
     version: false,
     files: [],
   };
   let onlyFiles = false;
+  let modeNext = false;
   for (const arg of argv) {
-    if (onlyFiles || arg === '-' || !arg.startsWith('-')) {
+    if (modeNext || arg.startsWith('--mode=')) {
+      const mode = modeNext ? arg : arg.slice('--mode='.length);
+      if (mode !== 'default' && mode !== 'formal') return { error: `unknown mode: ${mode}` };
+      opts.mode = mode;
+      modeNext = false;
+    } else if (onlyFiles || arg === '-' || !arg.startsWith('-')) {
       opts.files.push(arg);
     } else if (arg === '--') {
       onlyFiles = true;
@@ -76,6 +86,8 @@ function parseArgs(argv: readonly string[]): CliOptions | { error: string } {
       opts.fix = true;
     } else if (arg === '--json') {
       opts.json = true;
+    } else if (arg === '--mode') {
+      modeNext = true;
     } else if (arg === '--list-rules') {
       opts.listRules = true;
     } else if (arg === '-h' || arg === '--help') {
@@ -86,6 +98,7 @@ function parseArgs(argv: readonly string[]): CliOptions | { error: string } {
       return { error: `unknown option: ${arg}` };
     }
   }
+  if (modeNext) return { error: '--mode needs a value: default or formal' };
   return opts;
 }
 
@@ -126,7 +139,8 @@ function report(
   text: string,
   opts: CliOptions,
 ): { entry: FileReport; output: string } {
-  let diagnostics = lint(text);
+  const active = rulesFor(opts.mode);
+  let diagnostics = lint(text, active);
   let output = text;
   let fixed = 0;
   if (opts.fix) {
@@ -134,7 +148,7 @@ function report(
     if (applied !== text) {
       fixed = diagnostics.filter((d) => d.fix !== undefined).length;
       output = applied;
-      diagnostics = lint(applied);
+      diagnostics = lint(applied, active);
     }
   }
   const starts = lineStarts([...output]);
@@ -219,7 +233,13 @@ export function runCli(argv: readonly string[], io: CliIo = {}): CliResult {
     const note = OPT_IN.map(
       (r) => `gege-linter: ${r.name} is available to library callers but never run by the CLI`,
     ).join('\n');
-    return { code: 0, stdout: rules.map((r) => r.name).join('\n'), stderr: note };
+    return {
+      code: 0,
+      stdout: rulesFor(opts.mode)
+        .map((r) => r.name)
+        .join('\n'),
+      stderr: note,
+    };
   }
   if (opts.files.length === 0) return { code: 2, stdout: '', stderr: HELP };
   const usesStdin = opts.files.includes('-');

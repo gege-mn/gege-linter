@@ -1,5 +1,59 @@
 # Changelog
 
+## 0.7.0 — unreleased
+
+Menksoft's glyph encoding can now be read, not only reported.
+
+### Added
+
+- **`menksoftToUnicode(text)`** — rewrites text in the Menksoft Private Use
+  Area encoding (U+E234–E34F, Hudum) as standard Unicode. The glyph reading
+  is a TypeScript port of suragch's [`mongol_code`](https://github.com/suragch/mongol_code)
+  (CC0), Menksoft → Unicode direction only, held to its 468 upstream test
+  cases. On top of it the existing fixes run: a particle after the suffix
+  space gets a plain space where the port says MVS, and so does any run the
+  suffix dictionary does not know; `compat-punctuation` replaces the vertical
+  presentation forms; `non-initial-o` writes the two spellings it has settled.
+- **`isMenksoft(text)`** — the guard for it: a Menksoft letter present and no
+  Private Use Area code point outside the band, which keeps other glyph
+  encodings and icon fonts out.
+- **`detached-suffix`** — an ending that belongs on the stem, written after a
+  suffix connector (MVS or legacy NNBSP). The habitual ᠳᠠᠭ/ᠳᠡᠭ (-даг/-дэг)
+  has no detached form: **error**, in the default set. The fix attaches it by
+  deleting the connector, and where the stem ends in a separated final a/e
+  it deletes that vowel's MVS too, since the vowel becomes medial. The
+  sequences are held in the rule, not read from the suffix dictionary.
+- **Formal mode.** In legal and other formal documents the comitative
+  ᠲᠠᠢ/ᠲᠡᠢ and the ordinals ᠳᠤᠭᠠᠷ/ᠳᠦᠭᠡᠷ, ᠳᠠᠬᠢ/ᠳᠡᠬᠢ are attached as
+  well. `formalRules` (also `rulesFor('formal')`, type `Mode`) is `rules` with
+  those six reported as **warnings**, each with the same fix:
+  `lint(text, formalRules)`. After a digit nothing is reported in either mode.
+  Exported with it: `detachedSuffix`, `detachedSuffixFormal`,
+  `nnbspLegacyFormal`.
+- **CLI `--mode formal`** (also `--mode=formal`; default `default`). It
+  applies to `--fix` and `--list-rules` too.
+
+### Changed
+
+- **`no-pua` offers a fix** for a run that lies wholly inside the Menksoft
+  band and holds a letter: its Unicode reading. Runs outside the band are
+  reported as before, with no fix. The message and severity are unchanged.
+- **`non-initial-o` offers a fix for two words**, ᠮᠣᠩᠭᠣᠯ → ᠮᠣᠩᠭᠤᠯ and
+  ᠰᠣᠳᠣᠪᠢᠯᠢᠭ → ᠰᠣᠳᠤᠪᠢᠯᠢᠭ, which a reader has ruled on. Every other hit is still
+  a hint with no fix: a loanword, a proper noun and a slip look alike.
+  `applyFixes(text, lint(text))` therefore now rewrites those two words.
+- **`lint(text)` reports connector-joined ᠳᠠᠭ/ᠳᠡᠭ as an error**, from the
+  new `detached-suffix` rule, and `applyFixes` attaches it. It was silent
+  before, because the suffix dictionary lists the pair.
+- **`nnbsp-legacy` and `unknown-suffix` are silent on a connector that
+  `detached-suffix` reports**, so each connector has one diagnostic and one
+  fix. `unknown-suffix` skips ᠳᠠᠭ/ᠳᠡᠭ whether or not the dictionary lists
+  them, which keeps it from reporting "unknown suffix" there once they are
+  removed from `@gege-mn/mongol-bichig`. Run on its own, `nnbspLegacy` no
+  longer rewrites NNBSP before ᠳᠠᠭ/ᠳᠡᠭ; pair it with `detachedSuffix`.
+- **`tungaamalToUnicode` attaches ᠳᠠᠭ/ᠳᠡᠭ** rather than joining it with
+  MVS: `detachedSuffix` runs in its second pass.
+
 ## 0.6.0 — 2026-10-10
 
 Two functions added, no rule changed: every diagnostic is what it was in 0.5.0.
