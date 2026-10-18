@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.8.0 — unreleased
+## 0.8.0 — 2026-10-19
 
 Findings now come in four languages, and each has a code that reads the same
 in all of them. Every message's English is what it was in 0.7.0.
