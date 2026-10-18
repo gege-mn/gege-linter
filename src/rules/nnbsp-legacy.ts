@@ -1,5 +1,6 @@
 import { cp, isDigit, isMongolLetter, MVS, NNBSP, prevBaseCp } from '../chars.js';
 import { spaceParticles } from '../data/suffixes.js';
+import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 import { detachedAt } from './detached-suffix.js';
 
@@ -47,9 +48,7 @@ const make = (formal: boolean): Rule => ({
       out.push({
         rule: 'nnbsp-legacy',
         severity: 'warning',
-        message: beforeParticle
-          ? 'NNBSP (U+202F) before a space-joined particle — these are separate words and take a plain space, not a connector'
-          : 'NNBSP (U+202F) suffix connector is legacy since Unicode 16.0 — use MVS (U+180E)',
+        ...msg(beforeParticle ? 'nnbsp-legacy/particle' : 'nnbsp-legacy/connector'),
         start: i,
         end: i + 1,
         fix: beforeParticle ? ' ' : MVS,

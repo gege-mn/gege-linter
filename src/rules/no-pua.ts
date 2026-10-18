@@ -1,6 +1,7 @@
 import { cp } from '../chars.js';
 import { convertMenksoftToUnicode } from '../menksoft/convert.js';
 import { isLetter, isMenksoft } from '../menksoft/menksoft.js';
+import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 
 const isPua = (c: number): boolean => c >= 0xe000 && c <= 0xf8ff;
@@ -33,7 +34,7 @@ export const noPua: Rule = {
       out.push({
         rule: 'no-pua',
         severity: 'error',
-        message: `${j - i} Private Use Area code point${j - i > 1 ? 's' : ''} — legacy glyph encoding (Menksoft era), not interchangeable Unicode Mongolian`,
+        ...msg(j - i > 1 ? 'no-pua/many' : 'no-pua/one', { count: j - i }),
         start: i,
         end: j,
         ...(menksoft ? { fix: convertMenksoftToUnicode(run.join('')) } : {}),

@@ -1,6 +1,30 @@
 # Changelog
 
-## 0.7.0 — unreleased
+## 0.8.0 — unreleased
+
+Findings now come in four languages, and each has a code that reads the same
+in all of them. Every message's English is what it was in 0.7.0.
+
+### Added
+
+- **Messages in four languages: English, Mongolian, Simplified Chinese and
+  French.** Every diagnostic now carries a `messageId` (e.g.
+  `nnbsp-legacy/connector`) and the `data` filled into it; `message` stays
+  English and unchanged. `localize(diagnostic, 'mn')` gives it in another
+  locale (`locales`: `en`, `mn`, `zh-Hans`, `fr`; `isLocale` narrows a
+  string to one), and `messages` exports the catalogs themselves. A locale or
+  id the catalogs do not have gets the English `message` back. A diagnostic from a rule outside the package has no
+  `messageId` and keeps its own message.
+- **CLI `--lang <lang>`** (also `--lang=…`; default `en`) for the findings,
+  in the human output and in `--json`. The rest of the CLI's output stays
+  English.
+- **Codes.** Every diagnostic carries a `code`: `GL`, two digits for the
+  rule, two for the variant — `GL0101` NNBSP as a suffix connector, `GL0102`
+  NNBSP before a particle, through `GL1202`. Published codes are never
+  renumbered or reused. `codes` maps each `messageId` to its code, and the
+  CLI prints it before the rule name.
+
+## 0.7.0 — 2026-10-11
 
 Menksoft's glyph encoding can now be read, not only reported.
 

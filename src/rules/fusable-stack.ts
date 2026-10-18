@@ -1,5 +1,6 @@
 import { cp, FVS, isMongolLetter, MVS, NNBSP, prevBaseCp } from '../chars.js';
 import { suffixes } from '../data/suffixes.js';
+import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 
 /**
@@ -78,7 +79,12 @@ export const fusableStack: Rule = {
         out.push({
           rule: 'fusable-stack',
           severity: 'info',
-          message: `‘${stack.first.join('')}’ + ‘${stack.second.join('')}’ may also be written as the fused ‘${stack.fused}’ (${stack.fusedTranslit}) — both are correct`,
+          ...msg('fusable-stack/fusable', {
+            first: stack.first.join(''),
+            second: stack.second.join(''),
+            fused: stack.fused,
+            translit: stack.fusedTranslit,
+          }),
           start: i,
           end,
         });

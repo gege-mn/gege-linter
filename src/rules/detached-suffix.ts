@@ -1,4 +1,5 @@
 import { cp, FVS, isMongolLetter, MVS, NNBSP, prevBaseCp } from '../chars.js';
+import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 
 interface Ending {
@@ -65,9 +66,10 @@ const make = (formal: boolean): Rule => ({
       out.push({
         rule: 'detached-suffix',
         severity: found.formal ? 'warning' : 'error',
-        message: found.formal
-          ? `‘${written}’ (${found.cyrillic}) is written attached to the stem in formal documents — remove the connector`
-          : `‘${written}’ (${found.cyrillic}) is a verbal ending, always written attached to the stem — remove the connector`,
+        ...msg(found.formal ? 'detached-suffix/formal' : 'detached-suffix/verbal', {
+          suffix: written,
+          cyrillic: found.cyrillic,
+        }),
         start: separated ? b - 1 : i,
         end: i + 1,
         fix: separated ? cps.slice(b, i).join('') : '',

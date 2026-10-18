@@ -1,4 +1,5 @@
 import { cp, isDigit, isMongolLetter, MVS, prevBaseCp } from '../chars.js';
+import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 
 /**
@@ -20,8 +21,7 @@ export const mvsContext: Rule = {
       out.push({
         rule: 'mvs-context',
         severity: 'error',
-        message:
-          'MVS (U+180E) must sit between two Mongolian letters (stem–suffix, or a separated final a/e)',
+        ...msg('mvs-context/misplaced'),
         start: i,
         end: i + 1,
       });

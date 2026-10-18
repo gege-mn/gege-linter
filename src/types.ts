@@ -1,3 +1,5 @@
+import type { MessageId } from './messages/index.js';
+
 /** How urgently a finding needs attention. */
 export type Severity = 'error' | 'warning' | 'info';
 
@@ -5,8 +7,15 @@ export type Severity = 'error' | 'warning' | 'info';
 export interface Diagnostic {
   /** Rule that produced this finding, e.g. `nnbsp-legacy`. */
   rule: string;
+  /** Language-neutral and permanent, e.g. `GL0101`; see `codes`. */
+  code?: string;
   severity: Severity;
+  /** In English; `localize` gives it in another locale. */
   message: string;
+  /** Which catalog entry `message` is, e.g. `nnbsp-legacy/connector`. */
+  messageId?: MessageId;
+  /** The values filled into the entry's placeholders. */
+  data?: Readonly<Record<string, string | number>>;
   /** Start offset into the input, counted in code points. */
   start: number;
   /** End offset (exclusive), counted in code points. */

@@ -66,7 +66,7 @@ export const optionBlock = (id, options) =>
   </div>
   <div class="note-l"><input class="note" data-for="${id}" placeholder="note (optional) — what should it be, and why?"></div>`;
 
-const STYLE = `
+export const STYLE = `
  :root{--bg:#0d1017;--panel:#161a24;--fg:#e8ecf4;--dim:#94a0b8;--accent:#7aa2f7;
    --rule:#252b38;--ok:#7bd88f;--warn:#e0af68;--bad:#f7768e;--info:#7dcfff}
  *{box-sizing:border-box}

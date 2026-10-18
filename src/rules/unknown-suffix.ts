@@ -1,5 +1,6 @@
 import { cp, FVS, isDigit, isMongolLetter, MVS, NNBSP, prevBaseCp } from '../chars.js';
 import { spaceParticles, suffixes } from '../data/suffixes.js';
+import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 import { detachedAt } from './detached-suffix.js';
 
@@ -85,7 +86,7 @@ export const unknownSuffix: Rule = {
         out.push({
           rule: 'unknown-suffix',
           severity: 'warning',
-          message: `‘${word.sequence}’ (${word.cyrillic}) is a separate word, not a suffix — it takes a plain space, never a connector`,
+          ...msg('unknown-suffix/particle', { word: word.sequence, cyrillic: word.cyrillic }),
           start: conn === MVS ? i : i + 1,
           end: j,
           ...(conn === MVS ? { fix: ` ${word.sequence}` } : {}),
@@ -102,10 +103,15 @@ export const unknownSuffix: Rule = {
       out.push({
         rule: 'unknown-suffix',
         severity: 'warning',
-        message:
-          repaired !== undefined
-            ? `Suffix ‘${repaired.entry.sequence}’ (${repaired.entry.translit}) written with a stray FVS — particle shaping after the connector is automatic`
-            : `Unknown Hudum suffix ‘${run.join('')}’ after ${conn === MVS ? 'MVS' : 'NNBSP'} — not in the suffix dictionary`,
+        ...(repaired !== undefined
+          ? msg('unknown-suffix/stray-fvs', {
+              suffix: repaired.entry.sequence,
+              translit: repaired.entry.translit,
+            })
+          : msg('unknown-suffix/unknown', {
+              suffix: run.join(''),
+              connector: conn === MVS ? 'MVS' : 'NNBSP',
+            })),
         start: i + 1,
         end: j,
         ...(repaired !== undefined ? { fix: repaired.entry.sequence } : {}),

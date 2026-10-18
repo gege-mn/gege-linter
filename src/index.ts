@@ -17,6 +17,8 @@ import type { Diagnostic, Rule } from './types.js';
 
 export type { SuffixCategory, SuffixEntry } from './data/suffixes.js';
 export { suffixes } from './data/suffixes.js';
+export type { Catalog, Locale, MessageData, MessageId } from './messages/index.js';
+export { codes, isLocale, locales, localize, messages } from './messages/index.js';
 export type { Diagnostic, Rule, Severity } from './types.js';
 export {
   compatPunctuation,

@@ -3,7 +3,8 @@
 `@gege-mn/gege-linter` (bin: `gege-linter`) — lints traditional Mongolian
 script (Mongol bichig) text for incorrect or legacy Unicode usage. Public API:
 `lint`, `applyFixes`, `rules`, `formalRules`, `rulesFor`, per-rule exports, `isTungaamal`,
-`tungaamalToUnicode`, `isMenksoft`, `menksoftToUnicode`, types. The CLI is done;
+`tungaamalToUnicode`, `isMenksoft`, `menksoftToUnicode`, `localize`, `locales`,
+`messages`, `isLocale`, `codes`, types. The CLI is done;
 `runCli` is exported for tests.
 
 Born out of ~/Projects/gege.mn — its first consumer, via the /type pad's
@@ -41,6 +42,12 @@ there. Same rule in gege-converter and mongol-bichig.
 - One rule per file under `src/rules/`, registered in `src/index.ts`. Each
   rule is `{ name, check(text): Diagnostic[] }`, a pure function, and offers a
   `fix` string whenever the correction is mechanical.
+- Messages live in `src/messages/`, never inline: a rule spreads
+  `msg(id, data)`. A new message needs an entry in all four catalogs (en is
+  the source, `{name}` placeholders only), a code in `src/messages/codes.ts`
+  (never renumber or reuse a published one), and a sample in
+  `test/fixtures/message-samples.ts`. The Mongolian is reviewed by the owner
+  on `node scripts/build-messages-review.mjs` (after `pnpm build`).
 - **Looking right proves nothing.** NNBSP- and MVS-joined suffixes shape
   byte-identically in Noto v3.100 (as in v3.002); only the bytes differ. Every check reads
   code points, never rendering. Corollary for review: bichig cannot be judged

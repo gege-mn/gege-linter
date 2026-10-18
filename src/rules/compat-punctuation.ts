@@ -1,4 +1,5 @@
 import { cp, isHudumLetter, uplus } from '../chars.js';
+import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 
 /**
@@ -84,12 +85,12 @@ const COMPAT_FIX: ReadonlyMap<number, string> = new Map([
 ]);
 
 /** Which legacy standard a compatibility code point was encoded to round-trip. */
-const originOf = (c: number): string =>
+const originOf = (c: number) =>
   c <= 0xfe1f
-    ? 'vertical presentation form (GB 18030 round-trip)'
+    ? 'compat-punctuation/vertical'
     : c <= 0xfe4f
-      ? 'CJK compatibility form (CNS 11643 round-trip)'
-      : 'small form variant (CNS 11643 round-trip)';
+      ? 'compat-punctuation/cjk'
+      : 'compat-punctuation/small';
 
 /**
  * Chinese punctuation that core spec 13.5 assigns to Todo and Sibe, not to
@@ -160,7 +161,7 @@ export const compatPunctuation: Rule = {
         out.push({
           rule: 'compat-punctuation',
           severity: 'warning',
-          message: `${originOf(c)} ${uplus(c)} — a compatibility character, not for interchange; write ${uplus(compat)} and let the font supply the vertical glyph`,
+          ...msg(originOf(c), { char: uplus(c), target: uplus(compat) }),
           start: i,
           end: i + 1,
           fix: compat,
@@ -172,7 +173,7 @@ export const compatPunctuation: Rule = {
         out.push({
           rule: 'compat-punctuation',
           severity: 'info',
-          message: `${uplus(c)} is Chinese-borrowed punctuation — core spec 13.5 gives it to Todo and Sibe; Hudum writes ${uplus(borrowed)}`,
+          ...msg('compat-punctuation/borrowed', { char: uplus(c), target: uplus(borrowed) }),
           start: i,
           end: i + 1,
           fix: borrowed,

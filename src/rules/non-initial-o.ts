@@ -1,4 +1,5 @@
 import { cp, FVS, isMongolLetter, isVowel, MVS, NIRUGU, NNBSP } from '../chars.js';
+import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 
 const O = 'ᠣ';
@@ -68,8 +69,7 @@ export const nonInitialO: Rule = {
         out.push({
           rule: 'non-initial-o',
           severity: 'info',
-          message:
-            'O/Ö (U+1823/U+1825) normally occurs only in the first syllable — later syllables use U/Ü (U+1824/U+1826); loanwords and a few lexical exceptions are fine',
+          ...msg('non-initial-o/later'),
           start: i,
           end: i + 1,
           ...(settled ? { fix: ch === O ? 'ᠤ' : 'ᠦ' } : {}),

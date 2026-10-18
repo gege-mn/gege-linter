@@ -1,4 +1,5 @@
 import { cp, isMongolLetter, ZWJ, ZWNJ } from '../chars.js';
+import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 
 /**
@@ -49,10 +50,7 @@ export const zwjZwnj: Rule = {
       out.push({
         rule: 'zwj-zwnj',
         severity: 'warning',
-        message:
-          ch === ZWJ
-            ? 'ZWJ (U+200D) between two Mongolian letters — a positional form is overridden with FVS1–4, not a joiner; for a visible joining stroke use nirugu (U+180A). At a word boundary, where it selects a form in isolation, a ZWJ is legitimate and not reported'
-            : 'ZWNJ (U+200C) beside a Mongolian letter — it breaks the join mid-word, where FVS1–4 is the mechanism for a form override, and selects nothing at a word edge that default shaping would not already do',
+        ...msg(ch === ZWJ ? 'zwj-zwnj/zwj' : 'zwj-zwnj/zwnj'),
         start: i,
         end: i + 1,
       });

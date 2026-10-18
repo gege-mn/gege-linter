@@ -2,7 +2,17 @@
 import { readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
-import { applyFixes, fusableStack, lint, type Mode, rulesFor } from './index.js';
+import {
+  applyFixes,
+  fusableStack,
+  isLocale,
+  type Locale,
+  lint,
+  locales,
+  localize,
+  type Mode,
+  rulesFor,
+} from './index.js';
 import type { Diagnostic, Rule, Severity } from './types.js';
 
 /**
@@ -43,6 +53,7 @@ Options:
   --json         machine-readable output (code-point offsets plus line/col)
   --mode <mode>  default, or formal: legal and other formal documents, where
                  -тай, -дугаар and -дахь must be attached to the stem
+  --lang <lang>  language of the findings: en (default), mn, zh-Hans or fr
   --list-rules   print the rules this CLI runs, one per line, and exit
                  (library-only rules are noted on stderr)
   -h, --help     show this help
@@ -54,6 +65,7 @@ interface CliOptions {
   fix: boolean;
   json: boolean;
   mode: Mode;
+  lang: Locale;
   listRules: boolean;
   help: boolean;
   version: boolean;
@@ -65,6 +77,7 @@ function parseArgs(argv: readonly string[]): CliOptions | { error: string } {
     fix: false,
     json: false,
     mode: 'default',
+    lang: 'en',
     listRules: false,
     help: false,
     version: false,
@@ -72,8 +85,14 @@ function parseArgs(argv: readonly string[]): CliOptions | { error: string } {
   };
   let onlyFiles = false;
   let modeNext = false;
+  let langNext = false;
   for (const arg of argv) {
-    if (modeNext || arg.startsWith('--mode=')) {
+    if (langNext || arg.startsWith('--lang=')) {
+      const lang = langNext ? arg : arg.slice('--lang='.length);
+      if (!isLocale(lang)) return { error: `unknown language: ${lang} (${locales.join(', ')})` };
+      opts.lang = lang;
+      langNext = false;
+    } else if (modeNext || arg.startsWith('--mode=')) {
       const mode = modeNext ? arg : arg.slice('--mode='.length);
       if (mode !== 'default' && mode !== 'formal') return { error: `unknown mode: ${mode}` };
       opts.mode = mode;
@@ -88,6 +107,8 @@ function parseArgs(argv: readonly string[]): CliOptions | { error: string } {
       opts.json = true;
     } else if (arg === '--mode') {
       modeNext = true;
+    } else if (arg === '--lang') {
+      langNext = true;
     } else if (arg === '--list-rules') {
       opts.listRules = true;
     } else if (arg === '-h' || arg === '--help') {
@@ -99,6 +120,7 @@ function parseArgs(argv: readonly string[]): CliOptions | { error: string } {
     }
   }
   if (modeNext) return { error: '--mode needs a value: default or formal' };
+  if (langNext) return { error: `--lang needs a value: ${locales.join(', ')}` };
   return opts;
 }
 
@@ -154,7 +176,11 @@ function report(
   const starts = lineStarts([...output]);
   const entry: FileReport = {
     path,
-    diagnostics: diagnostics.map((d) => ({ ...d, ...locate(starts, d.start) })),
+    diagnostics: diagnostics.map((d) => ({
+      ...d,
+      message: localize(d, opts.lang),
+      ...locate(starts, d.start),
+    })),
     fixed,
   };
   return { entry, output };
@@ -180,7 +206,8 @@ function formatHuman(entries: readonly FileReport[], color: boolean): string {
       const loc = paint('2', `${d.line}:${d.col}`);
       const sev = paint(SEVERITY_SGR[d.severity], d.severity.padEnd(7));
       const tail = d.fix !== undefined ? ` ${paint('2', '[fixable]')}` : '';
-      lines.push(`  ${loc}  ${sev}  ${d.message}  ${paint('2', d.rule)}${tail}`);
+      const id = d.code !== undefined ? `${d.code} ${d.rule}` : d.rule;
+      lines.push(`  ${loc}  ${sev}  ${d.message}  ${paint('2', id)}${tail}`);
     }
     lines.push('');
   }

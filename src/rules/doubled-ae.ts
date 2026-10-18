@@ -1,3 +1,4 @@
+import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 
 /** A (U+1820) and E (U+1821) — the two vowels that never legitimately double. */
@@ -35,11 +36,10 @@ export const doubledAe: Rule = {
       // Report a run of three or more once, not twice.
       let end = i + 2;
       while (cps[end] === ch) end++;
-      const name = ch === A ? 'ᠠ (U+1820)' : 'ᠡ (U+1821)';
       out.push({
         rule: 'doubled-ae',
         severity: 'warning',
-        message: `Doubled ${name} — long a/e are written with the γ/g hiatus, never doubled, so this is usually Cyrillic аа/ээ copied letter for letter (the reflexive is ᠢᠶᠠᠨ/ᠢᠶᠡᠨ; the vocative is a single ᠠ/ᠡ as its own word)`,
+        ...msg('doubled-ae/doubled', { letter: ch, char: ch === A ? 'U+1820' : 'U+1821' }),
         start: i,
         end,
       });

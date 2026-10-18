@@ -70,6 +70,7 @@ gege-linter --fix file.txt                    # apply mechanical fixes in place
 gege-linter --json file.txt                   # machine-readable output
 cat file.txt | gege-linter --fix - > out.txt  # stdin; fixed text on stdout
 gege-linter --mode formal contract.txt        # formal documents (see Modes)
+gege-linter --lang mn file.txt                # findings in en, mn, zh-Hans or fr
 ```
 
 Exit codes: `0` clean or warnings only · `1` error-severity findings ·
@@ -88,6 +89,20 @@ const fixed = applyFixes(text, diagnostics); // code-point-safe — never String
 
 Every diagnostic carries **code-point offsets** and, when the correction is
 mechanical, a `fix` replacement string.
+
+`message` is English. The same finding in Mongolian, Simplified Chinese or
+French:
+
+```ts
+import { localize } from '@gege-mn/gege-linter';
+
+localize(diagnostics[0], 'mn'); // 'NNBSP (U+202F) нөхцөл холбогч нь …'
+// locales: 'en' | 'mn' | 'zh-Hans' | 'fr'
+```
+
+Each diagnostic also names its catalog entry (`messageId`, e.g.
+`nnbsp-legacy/connector`), the values filled into it (`data`), and its
+language-neutral `code` (`GL0101`), for a consumer that keeps its own wording.
 
 #### Text typed with Tungaamal
 
@@ -132,28 +147,33 @@ distinguishes from other legacy text; `lint` still reports that.
 
 ## Rules
 
-| Rule | Severity | What it flags |
-| --- | --- | --- |
-| `mvs-context` | error | MVS not sitting between two Mongolian letters — structurally broken; fonts render a visible nominal glyph |
-| `fvs-placement` | error | FVS1–4 not immediately after the Mongolian letter it modifies (a doubled FVS fails the same test) |
-| `no-pua` | error | Private Use Area code points — Menksoft-era glyph encoding, tofu everywhere else; contiguous runs report once |
-| `detached-suffix` | error | The habitual verbal ending ᠳᠠᠭ / ᠳᠡᠭ (-даг/-дэг) after a suffix connector (MVS or legacy NNBSP). It is always written attached to the stem; fix: delete the connector, and the MVS of a separated final a/e before it |
-| `detached-suffix` | warning | **Formal mode only.** The comitative ᠲᠠᠢ / ᠲᠡᠢ (-тай/-тэй) and the ordinals ᠳᠤᠭᠠᠷ / ᠳᠦᠭᠡᠷ (-дугаар/-дүгээр), ᠳᠠᠬᠢ / ᠳᠡᠬᠢ (-дахь/-дэх) after a connector. Same fix. Never reported after a digit |
-| `wrong-block` | warning | Todo / Sibe / Manchu / Ali Gali letters in Hudum text; known look-alikes (U+1888/U+1889) get a mechanical fix |
-| `zwj-zwnj` | warning | ZWJ/ZWNJ *between* two Mongolian letters — FVS1–4 is the mechanism for a form override. At a word boundary a joiner is selecting a positional form in isolation, which the core spec sanctions and abbreviations (ЗХУ) rely on, so it is left alone — as are emoji sequences |
-| `nnbsp-legacy` | warning | NNBSP joining two Mongolian letters — the pre-16.0 suffix connector; fix: MVS |
-| `unknown-suffix` | warning | MVS- (or legacy NNBSP-) joined letter run not in the curated Hudum suffix dictionary (`references/suffixes.md` in the mongol-bichig skill); a run that is a *separate word* is named as one, with a fix to a plain space (after MVS only — after NNBSP `nnbsp-legacy` already fixes an overlapping span); the separated final a/e (ᠬᠠᠷ‑ᠠ) is exempt |
-| `doubled-ae` | warning | Adjacent ᠠᠠ / ᠡᠡ — long a/e take the γ/g hiatus, never a doubled vowel, so this is Cyrillic аа/ээ copied letter for letter. No fix: the reflexive wants ᠢᠶᠠᠨ/ᠢᠶᠡᠨ and the vocative wants a single ᠠ/ᠡ as its own word. ᠣᠣ (short o) and ᠤᠤ/ᠦᠦ are untouched |
-| `compat-punctuation` | warning | Punctuation encoded as a *presentation form* — Vertical Forms (U+FE10–FE1F), CJK Compatibility Forms (U+FE30–FE4F), Small Form Variants (U+FE50–FE6F). These exist only to round-trip GB 18030 / CNS 11643; the vertical glyph is the font's job, and NFKC flattens U+FE16 to bare `?` rather than to ？. Fixed to the native ᠂ ᠃ ᠁ for comma / full stop / ellipsis and ？ for the question mark (UTN #57 Table 1 requires the CJK form), but plain ASCII `!` for the exclamation — no source requires a fullwidth one — and the nominal character otherwise |
-| `non-initial-o` | info | O/Ö (U+1823/U+1825) past the first syllable — dumb vowel-position heuristic; loanwords (ᠹᠣᠲᠣ) and lexical exceptions (ᠭᠣᠣᠯ) are legitimate, but ᠮᠣᠩᠭᠣᠯ is a real hit — write ᠮᠣᠩᠭᠤᠯ |
-| `compat-punctuation` | info | U+3001 / U+3002 (and halfwidth U+FF61 / U+FF64) inside Hudum text — core spec 13.5 gives the Chinese-borrowed marks to Todo and Sibe; Hudum writes ᠂ / ᠃. Silent unless the text really contains Hudum letters, since these are correct in Chinese. Sanctioned Western `,` `.` `?` `!` are never flagged |
+| Rule | Code | Severity | What it flags |
+| --- | --- | --- | --- |
+| `mvs-context` | GL0201 | error | MVS not sitting between two Mongolian letters — structurally broken; fonts render a visible nominal glyph |
+| `fvs-placement` | GL0301–03 | error | FVS1–4 not immediately after the Mongolian letter it modifies (a doubled FVS fails the same test) |
+| `no-pua` | GL0401 | error | Private Use Area code points — Menksoft-era glyph encoding, tofu everywhere else; contiguous runs report once |
+| `detached-suffix` | GL1201 | error | The habitual verbal ending ᠳᠠᠭ / ᠳᠡᠭ (-даг/-дэг) after a suffix connector (MVS or legacy NNBSP). It is always written attached to the stem; fix: delete the connector, and the MVS of a separated final a/e before it |
+| `detached-suffix` | GL1202 | warning | **Formal mode only.** The comitative ᠲᠠᠢ / ᠲᠡᠢ (-тай/-тэй) and the ordinals ᠳᠤᠭᠠᠷ / ᠳᠦᠭᠡᠷ (-дугаар/-дүгээр), ᠳᠠᠬᠢ / ᠳᠡᠬᠢ (-дахь/-дэх) after a connector. Same fix. Never reported after a digit |
+| `wrong-block` | GL0501–05 | warning | Todo / Sibe / Manchu / Ali Gali letters in Hudum text; known look-alikes (U+1888/U+1889) get a mechanical fix |
+| `zwj-zwnj` | GL0601–02 | warning | ZWJ/ZWNJ *between* two Mongolian letters — FVS1–4 is the mechanism for a form override. At a word boundary a joiner is selecting a positional form in isolation, which the core spec sanctions and abbreviations (ЗХУ) rely on, so it is left alone — as are emoji sequences |
+| `nnbsp-legacy` | GL0101–02 | warning | NNBSP joining two Mongolian letters — the pre-16.0 suffix connector; fix: MVS |
+| `unknown-suffix` | GL0801–03 | warning | MVS- (or legacy NNBSP-) joined letter run not in the curated Hudum suffix dictionary (`references/suffixes.md` in the mongol-bichig skill); a run that is a *separate word* is named as one, with a fix to a plain space (after MVS only — after NNBSP `nnbsp-legacy` already fixes an overlapping span); the separated final a/e (ᠬᠠᠷ‑ᠠ) is exempt |
+| `doubled-ae` | GL1001 | warning | Adjacent ᠠᠠ / ᠡᠡ — long a/e take the γ/g hiatus, never a doubled vowel, so this is Cyrillic аа/ээ copied letter for letter. No fix: the reflexive wants ᠢᠶᠠᠨ/ᠢᠶᠡᠨ and the vocative wants a single ᠠ/ᠡ as its own word. ᠣᠣ (short o) and ᠤᠤ/ᠦᠦ are untouched |
+| `compat-punctuation` | GL1101–03 | warning | Punctuation encoded as a *presentation form* — Vertical Forms (U+FE10–FE1F), CJK Compatibility Forms (U+FE30–FE4F), Small Form Variants (U+FE50–FE6F). These exist only to round-trip GB 18030 / CNS 11643; the vertical glyph is the font's job, and NFKC flattens U+FE16 to bare `?` rather than to ？. Fixed to the native ᠂ ᠃ ᠁ for comma / full stop / ellipsis and ？ for the question mark (UTN #57 Table 1 requires the CJK form), but plain ASCII `!` for the exclamation — no source requires a fullwidth one — and the nominal character otherwise |
+| `non-initial-o` | GL0701 | info | O/Ö (U+1823/U+1825) past the first syllable — dumb vowel-position heuristic; loanwords (ᠹᠣᠲᠣ) and lexical exceptions (ᠭᠣᠣᠯ) are legitimate, but ᠮᠣᠩᠭᠣᠯ is a real hit — write ᠮᠣᠩᠭᠤᠯ |
+| `compat-punctuation` | GL1104 | info | U+3001 / U+3002 (and halfwidth U+FF61 / U+FF64) inside Hudum text — core spec 13.5 gives the Chinese-borrowed marks to Todo and Sibe; Hudum writes ᠂ / ᠃. Silent unless the text really contains Hudum letters, since these are correct in Chinese. Sanctioned Western `,` `.` `?` `!` are never flagged |
+
+Every finding carries a **code** — `GL`, two digits for the rule, two for
+the variant (`GL0101` is NNBSP as a suffix connector, `GL0102` NNBSP before a
+particle). It reads the same in every language, and a published code is never
+renumbered or reused; `codes` maps each `messageId` to its code.
 
 One further rule is exported but **not** in the default set, because it
 reports text that is already correct:
 
-| Rule | Severity | What it flags |
-| --- | --- | --- |
-| `fusable-stack` | info | An analytic case + reflexive stack (ᠳᠤ + ᠪᠠᠨ) that may also be written as one fused suffix (ᠳᠠᠭᠠᠨ). Both are correct, so it carries **no fix** — the fused sequence is named in the message instead |
+| Rule | Code | Severity | What it flags |
+| --- | --- | --- | --- |
+| `fusable-stack` | GL0901 | info | An analytic case + reflexive stack (ᠳᠤ + ᠪᠠᠨ) that may also be written as one fused suffix (ᠳᠠᠭᠠᠨ). Both are correct, so it carries **no fix** — the fused sequence is named in the message instead |
 
 ```ts
 import { fusableStack, lint, rules } from '@gege-mn/gege-linter';

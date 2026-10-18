@@ -8,6 +8,13 @@ severity, or when picking up the next piece of work.
 
 ## Rules, tier by tier
 
+The numbers below are the roadmap's, not the finding codes'. Codes
+(`src/messages/codes.ts`) number the rules in the order they shipped —
+`nnbsp-legacy` GL01 through `detached-suffix` GL12 — and a new rule takes the
+next free GL number, along with message ids in all four catalogs and a sample
+in `test/fixtures/message-samples.ts`. A published code is never renumbered
+or reused.
+
 Tier 1 — pure sequence checks, no data files — ALL DONE (2026-07-23):
 1. `nnbsp-legacy` — DONE (first rule, sets the pattern). It is a **warning
    with a mechanical fix, not an error**, because **no keyboard or IME emits

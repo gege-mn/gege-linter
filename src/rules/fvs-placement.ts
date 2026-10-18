@@ -1,4 +1,5 @@
 import { cp, FVS, isMongolLetter, uplus } from '../chars.js';
+import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 
 /**
@@ -11,11 +12,13 @@ import type { Diagnostic, Rule } from '../types.js';
  * is how a reader misread the one real error in a 31,320-word harvest on
  * 2026-07-27, ruling it a false alarm for a claim the rule was not making.
  */
-const landedOn = (prev: string | undefined): string => {
-  if (prev === undefined) return 'starts the text';
-  const n = FVS.get(prev);
-  if (n !== undefined) return `follows FVS${n} (${uplus(prev)})`;
-  return `follows ${uplus(prev)}`;
+const landedOn = (n: number, ch: string, prev: string | undefined) => {
+  const char = uplus(ch);
+  if (prev === undefined) return msg('fvs-placement/start', { n, char });
+  const prevN = FVS.get(prev);
+  if (prevN !== undefined)
+    return msg('fvs-placement/after-fvs', { n, char, prevN, prev: uplus(prev) });
+  return msg('fvs-placement/after-char', { n, char, prev: uplus(prev) });
 };
 
 export const fvsPlacement: Rule = {
@@ -31,7 +34,7 @@ export const fvsPlacement: Rule = {
       out.push({
         rule: 'fvs-placement',
         severity: 'error',
-        message: `FVS${n} (${uplus(ch as string)}) ${landedOn(cps[i - 1])} — a variation selector must immediately follow the Mongolian letter it modifies`,
+        ...landedOn(n, ch as string, cps[i - 1]),
         start: i,
         end: i + 1,
       });
