@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- **`tungaamalToUnicode` reads Tungaamal's y before i** (owner's ruling,
+  2026-10-25). Inside a word after a vowel, y + i becomes the double-tooth i
+  (ᠰᠠᠶᠢᠨ → ᠰᠠᠢᠨ), y + FVS1 + i becomes a plain y + i (`may1iγ` → ᠮᠠᠶᠢᠭ), and
+  чамайг/намайг are written with FVS1 (`čimay1i`, `namay1i`). One pass: a
+  y1i never ends as a plain i. On text with a y before i it is therefore not
+  idempotent; run it once, on Tungaamal's output. There is no lint rule for
+  this: plain vowel + y + i is correct in ᠮᠠᠶᠢᠭ and ᠬᠠᠶᠢᠭ.
+
 ## 0.8.0 — 2026-10-19
 
 Findings now come in four languages, and each has a code that reads the same

@@ -47,6 +47,37 @@ describe('tungaamalToUnicode', () => {
     expect(tungaamalToUnicode(text)).toBe(`\u4F60\u597D\u3001\u4E16\u754C\u3002 ᠭᠡᠷ`);
   });
 
+  // Owner's ruling, 2026-10-25: Tungaamal's y + i is the double-tooth i, and
+  // its y + FVS1 + i a real y.
+  describe('the y before i', () => {
+    it('reads y + i after a vowel as the double-tooth i', () => {
+      expect(tungaamalToUnicode('ᠰᠠᠶᠢᠨ')).toBe('ᠰᠠᠢᠨ');
+      expect(tungaamalToUnicode(`ᠪᠠᠶᠢᠨ${MVS}ᠠ`)).toBe(`ᠪᠠᠢᠨ${MVS}ᠠ`);
+      expect(tungaamalToUnicode('ᠣᠶᠢᠯᠠᠭᠠᠬᠤ')).toBe('ᠣᠢᠯᠠᠭᠠᠬᠤ');
+    });
+
+    it('reads y + FVS1 + i as a real y, dropping only the FVS1', () => {
+      expect(tungaamalToUnicode(`ᠬᠠᠶ${FVS1}ᠢᠭ`)).toBe('ᠬᠠᠶᠢᠭ');
+      expect(tungaamalToUnicode(`ᠮᠠᠶ${FVS1}ᠢᠭ`)).toBe('ᠮᠠᠶᠢᠭ');
+    });
+
+    it('never chains the two: y + FVS1 + i does not end as a plain i', () => {
+      expect(tungaamalToUnicode(`ᠮᠠᠶ${FVS1}ᠢᠭ ᠰᠠᠶᠢᠨ`)).toBe('ᠮᠠᠶᠢᠭ ᠰᠠᠢᠨ');
+    });
+
+    it('writes чамайг and намайг with FVS1, plain or not', () => {
+      expect(tungaamalToUnicode('ᠴᠢᠮᠠᠶᠢ')).toBe(`ᠴᠢᠮᠠᠶ${FVS1}ᠢ`);
+      expect(tungaamalToUnicode(`ᠴᠢᠮᠠᠶ${FVS1}ᠢ`)).toBe(`ᠴᠢᠮᠠᠶ${FVS1}ᠢ`);
+      expect(tungaamalToUnicode('ᠨᠠᠮᠠᠶᠢ᠃')).toBe(`ᠨᠠᠮᠠᠶ${FVS1}ᠢ᠃`);
+      expect(tungaamalToUnicode(`ᠴᠢᠮᠠᠶᠢ${NNBSP}ᠪᠠᠨ`)).toBe(`ᠴᠢᠮᠠᠶ${FVS1}ᠢ${MVS}ᠪᠠᠨ`);
+    });
+
+    it('leaves the suffixes ᠶᠢ and ᠶᠢᠨ after a connector, and y + i after no vowel', () => {
+      expect(tungaamalToUnicode(`ᠬᠣᠲᠠ${NNBSP}ᠶᠢᠨ`)).toBe(`ᠬᠣᠲᠠ${MVS}ᠶᠢᠨ`);
+      expect(tungaamalToUnicode(`ᠨᠣᠮ${NNBSP}ᠢ ᠶᠢᠨ`)).toBe(`ᠨᠣᠮ${MVS}ᠢ ᠶᠢᠨ`);
+    });
+  });
+
   it('does not touch what is not Mongolian', () => {
     expect(tungaamalToUnicode('Tungaamal 12\u202F345 😀')).toBe('Tungaamal 12\u202F345 😀');
   });

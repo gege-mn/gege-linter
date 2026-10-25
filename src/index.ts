@@ -130,33 +130,96 @@ export function isTungaamal(text: string): boolean {
  * Rewrite text typed with the Tungaamal keyboard as standard Unicode Hudum.
  *
  * Tungaamal's output is not a private encoding: it is the Mongolian block plus
- * two substitutions and the pre-Unicode-16 connector model, and each of those
- * already has a mechanical fix in a rule. This is those fixes in the one order
- * that is safe for them:
+ * two substitutions, the pre-Unicode-16 connector model, and its own y before
+ * i. The first two already have a mechanical fix in a rule; this is those
+ * fixes in the one order that is safe for them, then the third:
  *
  * 1. **The letters.** Feminine k and g come out as the Ali Gali look-alikes
  *    U+1888/U+1889 (masculine uses the standard QA/GA), and `wrong-block`
  *    maps them to U+182C/U+182D.
  * 2. **The connectors**, judged on the corrected letters — NNBSP to MVS, or to
  *    a plain space before a particle, and stray FVS off suffix heads.
+ * 3. **The y before i**, inside a word after a vowel (`tungaamalGlides`).
  *
  * One pass is not enough, which is why this is a function and not a recipe.
  * Both suffix rules compare against a dictionary spelled with the standard
  * letters, so a suffix or particle still carrying U+1889 is not recognised:
  * ᠦᢉᠡᠢ after NNBSP gets MVS where the particle ᠦᠭᠡᠢ takes a plain space.
  *
- * **Only for text known to be Tungaamal's** — `isTungaamal` is the test. Real
- * Ali Gali uses U+1888 and U+1889 as letters in their own right and would be
- * rewritten for good.
+ * **Only for text known to be Tungaamal's** — `isTungaamal` is one test, and
+ * text known to come from Tungaamal or Kimo qualifies without it. Real Ali
+ * Gali uses U+1888 and U+1889 as letters in their own right and would be
+ * rewritten for good, and our own vowel + y + i (ᠮᠠᠶᠢᠭ) would lose its y.
+ * For the same reason it is **not idempotent** on text with a y before i:
+ * run it once, on Tungaamal's output, never on its own result.
  *
- * Encoding only. Tungaamal also *spells* some words differently (`sayin` for
- * сайн, detached case particles); that is orthography, not Unicode, and is
- * left exactly as written. So is everything the other rules report —
+ * Otherwise encoding only. Detached case particles and the like are left
+ * exactly as written, and so is everything the other rules report —
  * punctuation above all, which is not Tungaamal's to answer for.
  */
 export function tungaamalToUnicode(text: string): string {
   const letters = applyFixes(text, lint(text, [wrongBlock]));
-  return applyFixes(letters, lint(letters, [nnbspLegacy, unknownSuffix, detachedSuffix]));
+  const connectors = applyFixes(
+    letters,
+    lint(letters, [nnbspLegacy, unknownSuffix, detachedSuffix]),
+  );
+  return tungaamalGlides(connectors);
+}
+
+const YA = 0x1836;
+const I = 0x1822;
+const FVS1 = 0x180b;
+const isHudumVowel = (c: number | undefined): boolean =>
+  c !== undefined && c >= 0x1820 && c <= 0x1826;
+const isMongolianLetter = (c: number | undefined): boolean =>
+  c !== undefined && c >= 0x1820 && c <= 0x18aa;
+/** чамайг and намайг: the stroke after their a is the accusative's y, which only FVS1 draws. */
+const Y1I_STEMS: readonly (readonly number[])[] = ['ᠴᠢᠮᠠ', 'ᠨᠠᠮᠠ'].map((w) =>
+  [...w].map((c) => c.codePointAt(0) ?? 0),
+);
+
+/**
+ * Tungaamal's y before i, read as the house writes it (owner's ruling,
+ * 2026-10-25): after a vowel, inside a word,
+ *
+ * - y + i is how Tungaamal encodes the double-tooth i: ᠰᠠᠶᠢᠨ becomes ᠰᠠᠢᠨ;
+ * - y + FVS1 + i is a real y: ᠮᠠᠶ\u180Bᠢᠭ becomes ᠮᠠᠶᠢᠭ, never ᠮᠠᠢᠭ;
+ * - чамайг and намайг, plain or with FVS1, become ᠴᠢᠮᠠᠶ\u180Bᠢ / ᠨᠠᠮᠠᠶ\u180Bᠢ.
+ *
+ * Every decision reads the input, so the second row's result is never fed
+ * to the first. A connector or space breaks the word, so the suffixes ᠶᠢ and
+ * ᠶᠢᠨ after MVS stay as they are.
+ */
+function tungaamalGlides(text: string): string {
+  const cps = [...text].map((c) => c.codePointAt(0) ?? 0);
+  const out: number[] = [];
+  for (let i = 0; i < cps.length; i += 1) {
+    const stem = isMongolianLetter(cps[i - 1])
+      ? undefined
+      : Y1I_STEMS.find((s) => s.every((c, k) => cps[i + k] === c));
+    if (stem) {
+      let j = i + stem.length;
+      if (cps[j] === YA) {
+        j += cps[j + 1] === FVS1 ? 2 : 1;
+        if (cps[j] === I && !isMongolianLetter(cps[j + 1])) {
+          out.push(...stem, YA, FVS1, I);
+          i = j;
+          continue;
+        }
+      }
+    }
+    const c = cps[i] as number;
+    if (c === YA && isHudumVowel(cps[i - 1])) {
+      if (cps[i + 1] === I) continue;
+      if (cps[i + 1] === FVS1 && cps[i + 2] === I) {
+        out.push(YA);
+        i += 1;
+        continue;
+      }
+    }
+    out.push(c);
+  }
+  return String.fromCodePoint(...out);
 }
 
 const isPua = (c: number): boolean => c >= 0xe000 && c <= 0xf8ff;

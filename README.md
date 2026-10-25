@@ -117,8 +117,12 @@ and g as the Ali Gali look-alikes U+1888/U+1889 — on the pre-Unicode-16
 connector model. `tungaamalToUnicode` corrects the letters first and the
 connectors second, which a single `applyFixes(text, lint(text))` cannot: a particle still
 spelled with U+1889 is not recognised, and gets a connector where it takes a
-space. It changes encoding, never spelling, and nothing but those two things:
-punctuation and whatever else `lint` reports are left for `lint`.
+space. Last, it reads Tungaamal's y before i, inside a word after a vowel:
+y + i is the double-tooth i (ᠰᠠᠶᠢᠨ → ᠰᠠᠢᠨ), y + FVS1 + i a real y (`may1iγ` →
+ᠮᠠᠶᠢᠭ), and чамайг/намайг keep FVS1 (`čimay1i`). Each decision reads the
+input, so the second never turns into the first; but for the same reason a
+second run would, so run it once. Punctuation and whatever else `lint`
+reports are left for `lint`.
 
 #### Text in the Menksoft encoding
 
@@ -140,10 +144,12 @@ offers the same reading as a fix, run by run.
 #### Tungaamal, continued
 
 Use it only on text known to be Tungaamal's — real Ali Gali uses those two
-letters in their own right. `isTungaamal` is that test: either look-alike
-present, and no other Ali Gali letter anywhere in the text. It is `false` for
-Tungaamal text that happens to contain no feminine k or g, which nothing
-distinguishes from other legacy text; `lint` still reports that.
+letters in their own right, and standard text's own ᠮᠠᠶᠢᠭ would lose its y.
+`isTungaamal` is one test: either look-alike present, and no other Ali Gali
+letter anywhere in the text. It is `false` for Tungaamal text that happens to
+contain no feminine k or g, which nothing distinguishes from other legacy
+text; when you know the text is Tungaamal's or Kimo's (it uses the same
+encoding), call `tungaamalToUnicode` without asking.
 
 ## Rules
 

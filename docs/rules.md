@@ -118,14 +118,17 @@ heuristic); full lexicon checks are spell-checker territory — out of scope.
 Two candidates promoted out of tier 3 by the 2026-07-27 spot check, both
 mechanical and both with a fix:
 
-10. `medial-glide` — vowel + ᠶ (U+1836) + ᠢ (U+1822) → drop the ᠶ. The reader
-    asked for it unprompted ("1 и displays two shilbe after vowels in the new
-    unicode"), and mongol-bichig's `orthography.md` independently records that
-    UTN #57 prefers the modern analysis (ail, sayin → sain). Info or warning,
-    never error: the V+y+i spelling is *older*, not malformed. Guard the left
-    side on a **vowel letter**, not a connector — ᠶᠢᠨ/ᠢᠶᠡᠨ after MVS must not
-    match. gege-converter already does this in `normalizeOrthography`, so the
-    logic is worth sharing rather than reinventing.
+10. `medial-glide` — DROPPED as a lint rule (owner's ruling, 2026-10-25).
+    Plain vowel + ᠶ + ᠢ is valid house spelling where the y is real —
+    маяг ᠮᠠᠶᠢᠭ `mayiγ`, хаяг ᠬᠠᠶᠢᠭ `qayiγ`, маяглах `mayiγlaqu` — so a rule
+    dropping the ᠶ from arbitrary text would break correct words, and nothing
+    in the bichig alone tells ᠮᠠᠶᠢᠭ from Tungaamal's ᠰᠠᠶᠢᠨ. The mapping lives
+    in `tungaamalToUnicode` instead, for text known to be Tungaamal's (Kimo's),
+    in one pass: vowel + y + i → vowel + i (ᠰᠠᠶᠢᠨ → ᠰᠠᠢᠨ, the double tooth);
+    vowel + y + FVS1 + i → vowel + y + i (Kimo's `may1iγ` → ᠮᠠᠶᠢᠭ; never to a
+    plain i); чамайг/намайг, plain or with FVS1, → `čimay1i` / `namay1i`.
+    gege-converter's `dropGlideYa` does the first row only: it leaves Kimo's
+    FVS1 on the second, and would read a plain ᠴᠢᠮᠠᠶᠢ as ᠴᠢᠮᠠᠢ.
 11. `doubled-ae` — DONE (2026-07-27). Adjacent ᠠᠠ (U+1820 U+1820) or ᠡᠡ
     (U+1821 U+1821), warning, **no fix**. Long a/e take the γ/g hiatus and are
     never doubled, so a pair is Cyrillic аа/ээ copied letter for letter. The
