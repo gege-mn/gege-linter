@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.9.0 — 2026-10-25
+
+`tungaamalToUnicode` now also reads Tungaamal's y before i. Nothing else
+changed.
 
 ### Changed
 
