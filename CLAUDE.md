@@ -22,13 +22,17 @@ own project.
 **Publishing belongs to the repository owner, never an agent.** The registry
 requires an OTP an agent cannot supply, so an attempt fails at best and
 half-releases at worst. An agent *may* bump the version, write the CHANGELOG,
-run `pnpm build && pnpm typecheck && pnpm test`, confirm `npm pack --dry-run`
+run `bun run build && bun run typecheck && bun run test`, confirm `bun pm pack --dry-run`
 ships the right files, and then report that the release is ready — and stop
 there. Same rule in gege-converter and mongol-bichig.
 
 ## Conventions
 
-- **pnpm**, Biome (2-space indent, single quotes), Vitest, plain `tsc` to
+- Package manager: pnpm on CI, servers and other machines (`pnpm-lock.yaml` is
+  committed); on the main Mac, which has no node/pnpm, use Bun — `bun install`,
+  `bun run <script>` (never bare `bun build`/`bun test`), `bunx`. After any
+  dependency change under Bun run `bun run lock`. Never npm/npx.
+- Biome (2-space indent, single quotes), Vitest, plain `tsc` to
   `dist/`. **No third-party runtime dependencies** — the single dependency is
   first-party `@gege-mn/mongol-bichig`, itself dependency-free. Keep it that
   way.
@@ -47,7 +51,7 @@ there. Same rule in gege-converter and mongol-bichig.
   the source, `{name}` placeholders only), a code in `src/messages/codes.ts`
   (never renumber or reuse a published one), and a sample in
   `test/fixtures/message-samples.ts`. The Mongolian is reviewed by the owner
-  on `node scripts/build-messages-review.mjs` (after `pnpm build`).
+  on `node scripts/build-messages-review.mjs` (after `bun run build`).
 - **Looking right proves nothing.** NNBSP- and MVS-joined suffixes shape
   byte-identically in Noto v3.100 (as in v3.002); only the bytes differ. Every check reads
   code points, never rendering. Corollary for review: bichig cannot be judged
@@ -58,7 +62,7 @@ there. Same rule in gege-converter and mongol-bichig.
 **The script's fact base lives in ~/Projects/mongol-bichig** — nine
 source-cited reference documents plus `sources.md`. Do not re-derive script
 facts here and do not copy them back into this repo. Read them on demand:
-`npx skills add gege-mn/mongol-bichig`.
+`bunx skills add gege-mn/mongol-bichig`.
 
 The one fact that explains why this project exists: **Unicode 16.0 (Sept 2024)
 moved the suffix connector from NNBSP (U+202F) to MVS (U+180E)** — core spec
