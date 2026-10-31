@@ -7,7 +7,7 @@ import type { Diagnostic, Rule } from '../types.js';
 // them says nothing.
 const STANDALONE = new Set(['particle', 'possession']);
 
-// Also headwords in Монгол толь (ᠪᠠᠷ бар, ᠨᠠᠷ нар, ᠲᠠᠢ тай, ᠳᠤᠷ дур…). The text
+// Also dictionary headwords (ᠪᠠᠷ бар, ᠨᠠᠷ нар, ᠲᠠᠢ тай, ᠳᠤᠷ дур…). The text
 // alone cannot tell which is meant, so these are hints and carry no fix.
 const HOMOGRAPHS = new Set([
   'yin',
@@ -62,6 +62,10 @@ export const spaceBeforeSuffix: Rule = {
         return !isMongolLetter(cp(cps[j]));
       });
       if (!found) continue;
+      // Standard suffixes take no FVS, so the fix writes the dictionary's spelling.
+      let end = i + 1;
+      for (let left = found.seq.length; left > 0; end++) if (!FVS.has(cps[end] ?? '')) left--;
+      while (FVS.has(cps[end] ?? '')) end++;
       const { sequence, cyrillic, translit } = found.entry;
       const data = { suffix: sequence, cyrillic };
       out.push(
@@ -78,8 +82,8 @@ export const spaceBeforeSuffix: Rule = {
               severity: 'warning',
               ...msg('space-before-suffix/suffix', data),
               start: i,
-              end: i + 1,
-              fix: MVS,
+              end,
+              fix: `${MVS}${sequence}`,
             },
       );
     }

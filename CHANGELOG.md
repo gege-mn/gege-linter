@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.2 — 2026-10-31
+
+### Fixed
+
+- **GL1301's fix drops an FVS inside the suffix.** It kept the FVS, which
+  `unknown-suffix` then reported as stray.
+
 ## 0.10.1 — 2026-10-31
 
 ### Fixed
@@ -17,7 +24,7 @@
   MVS). Case endings, plurals and fused forms, such as ᠪᠢᠴᠢᠭ ᠲᠡᠢ, which no font
   shows and no other rule sees. In the default rule set, so text that was clean
   may now report it.
-- **GL1302, info, no fix**, for suffixes that are also words in Монгол толь
+- **GL1302, info, no fix**, for suffixes that are also dictionary words
   (ᠪᠠᠷ бар, ᠨᠠᠷ нар, ᠲᠠᠢ тай, ᠳᠤᠷ дур…), where the text cannot say which is meant.
   Particles, ᠬᠢ/ᠬᠢᠨ and the words that take a space (ᠤᠤ, ᠦᠭᠡᠢ…) are never reported.
 

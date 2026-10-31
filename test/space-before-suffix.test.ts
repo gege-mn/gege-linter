@@ -19,7 +19,7 @@ describe('space-before-suffix', () => {
       severity: 'warning',
       code: 'GL1301',
       start: bichig.length,
-      end: bichig.length + 1,
+      end: bichig.length + 1 + tei.length,
     });
     expect(applyFixes(text, only(text))).toBe(`${bichig}${MVS}${tei}`);
   });
@@ -63,6 +63,14 @@ describe('space-before-suffix', () => {
 
   it('matches through an FVS inside the suffix', () => {
     expect(only(`${nom} ${'\u1824\u180b\u1828'}`)).toHaveLength(1);
+  });
+
+  it('drops the FVS when it fixes', () => {
+    const fvs = String.fromCodePoint(0x180b);
+    const text = `${nom} ᠤ${fvs}ᠨ`;
+    const fixed = applyFixes(text, only(text));
+    expect(fixed).toBe(`${nom}${MVS}ᠤᠨ`);
+    expect(lint(fixed)).toEqual([]);
   });
 
   it('leaves connector-joined suffixes alone', () => {

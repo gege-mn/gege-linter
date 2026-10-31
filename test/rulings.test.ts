@@ -96,7 +96,7 @@ describe('rulings / clean — no misses, confirmed 4 of 4', () => {
 describe('rulings / running text', () => {
   it('repairs Магадгүй барууны соёлын нөлөө юм болов уу end to end', () => {
     const before = 'ᠮᠠᠭᠠᠳ ᠦᢉᠡᠢ ᠪᠠᠷᠠᠭᠤᠨ ᠤ\u180B ᠰᠣᠶᠤᠯ\u202Fᠤ\u180Bᠨ ᠨᠥᠯᠦᢉᠡ ᠶᠤᠮ ᠪᠣᠯᠪᠠ\u202Fᠤᠤ';
-    const after = 'ᠮᠠᠭᠠᠳ ᠦᠭᠡᠢ ᠪᠠᠷᠠᠭᠤᠨ\u180Eᠤ\u180B ᠰᠣᠶᠤᠯ\u180Eᠤᠨ ᠨᠥᠯᠦᠭᠡ ᠶᠤᠮ ᠪᠣᠯᠪᠠ ᠤᠤ';
+    const after = 'ᠮᠠᠭᠠᠳ ᠦᠭᠡᠢ ᠪᠠᠷᠠᠭᠤᠨ\u180Eᠤ ᠰᠣᠶᠤᠯ\u180Eᠤᠨ ᠨᠥᠯᠦᠭᠡ ᠶᠤᠮ ᠪᠣᠯᠪᠠ ᠤᠤ';
     expect(fixed(before)).toBe(after);
   });
 

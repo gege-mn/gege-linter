@@ -212,7 +212,7 @@ because the first deletes connectors the plain `nnbspLegacy` would rewrite.
 The suffix dictionary itself ships as part of the public API (`suffixes`),
 sourced from school grammar, UTN #57, and the mongfontbuilder registry.
 
-Roadmap (see `CLAUDE.md`): FVS registration against
+Roadmap (see `docs/rules.md`): FVS registration against
 the standardized-variant tables · full stem–suffix vowel-harmony agreement.
 
 ## Why it matters
