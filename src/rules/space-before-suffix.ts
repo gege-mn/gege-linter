@@ -9,7 +9,7 @@ import type { Diagnostic, Rule } from '../types.js';
 const STANDALONE = new Set(['particle', 'possession']);
 const ALWAYS_JOINED = new Set(['chu', 'chü']);
 
-// Also dictionary headwords (ᠪᠠᠷ бар, ᠨᠠᠷ нар, ᠲᠠᠢ тай, ᠳᠤᠷ дур…). The text
+// Also dictionary headwords (ᠪᠠᠷ бар, ᠨᠠᠷ нар, ᠲᠠᠢ тай, ᠳᠤᠷ дур, ᠳᠤᠭᠠᠷ дугаар…). The text
 // alone cannot tell which is meant, so these are hints and carry no fix.
 const HOMOGRAPHS = new Set([
   'yin',
@@ -26,6 +26,9 @@ const HOMOGRAPHS = new Set([
   'nar',
   'degen',
   'tuni',
+  'duγar',
+  'düger',
+  'daγan',
 ]);
 
 const entries = suffixes

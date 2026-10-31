@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.3 — 2026-10-31
+
+### Fixed
+
+- **`space-before-suffix` no longer offers to glue дугаар, дүгээр or даган onto the
+  word before.** ᠤᠲᠠᠰᠤᠨ + MVS + ᠤ ᠳ + FVS1 + ᠤᠭᠠᠷ (утасны дугаар) got GL1301, and
+  the fix joined the words and dropped the FVS. These three are now GL1302: a hint, no fix.
+
 ## 0.10.2 — 2026-10-31
 
 ### Fixed

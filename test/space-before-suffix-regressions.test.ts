@@ -23,6 +23,9 @@ const WORDS_TOO = [
   'nar',
   'degen',
   'tuni',
+  'duγar',
+  'düger',
+  'daγan',
 ];
 const ALWAYS_JOINED = ['chu', 'chü'];
 const standsAlone = (s: { category: string; translit: string }) =>
