@@ -10,7 +10,7 @@ severity, or when picking up the next piece of work.
 
 The numbers below are the roadmap's, not the finding codes'. Codes
 (`src/messages/codes.ts`) number the rules in the order they shipped —
-`nnbsp-legacy` GL01 through `detached-suffix` GL12 — and a new rule takes the
+`nnbsp-legacy` GL01 through `space-before-suffix` GL13 — and a new rule takes the
 next free GL number, along with message ids in all four catalogs and a sample
 in `test/fixtures/message-samples.ts`. A published code is never renumbered
 or reused.
@@ -93,8 +93,9 @@ Tier 2 — data-driven (the data lives in `@gege-mn/mongol-bichig`):
 7. `unknown-suffix` — DONE. Connector followed by a sequence not in the
    `connectorSuffixes` registry (warn, not error). No count is quoted here:
    it moves whenever mongol-bichig publishes.
-8. `space-before-suffix` — plain U+0020 before a known suffix ("did you mean
-   MVS?") — the exact bug found by hand in gege.mn's footer. The package
+8. `space-before-suffix` — DONE (2026-10-31). Plain U+0020 before a known suffix ("did you mean
+   MVS?") — a warning with a fix, or an info with none where the suffix is also
+   a Монгол толь headword — the exact bug found by hand in gege.mn's footer. The package
    already ships what this needs: `spaceParticles` is the whitelist — a space
    before those is *correct* and an MVS is the error. **Its mirror is done**
    (2026-07-27): `unknown-suffix` now recognises a connector in front of a

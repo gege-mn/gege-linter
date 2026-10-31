@@ -29,7 +29,7 @@ glance.](assets/invisible-failures.png)
    MVS (U+180E) joined suffixes render **pixel-identically**, but the left
    was made legacy by Unicode 16.0 (2024). No eye and no font can tell;
    only the bytes differ.
-2. **The plain space** — `space-before-suffix`, *planned.* An ordinary space
+2. **The plain space** — `space-before-suffix`, *shipped.* An ordinary space
    quietly demotes the suffix to a standalone vowel — grammatically visible,
    yet nothing complains. This exact bug once shipped on
    [gege.mn](https://gege.mn)'s footer.
@@ -164,6 +164,8 @@ encoding), call `tungaamalToUnicode` without asking.
 | `zwj-zwnj` | GL0601–02 | warning | ZWJ/ZWNJ *between* two Mongolian letters — FVS1–4 is the mechanism for a form override. At a word boundary a joiner is selecting a positional form in isolation, which the core spec sanctions and abbreviations (ЗХУ) rely on, so it is left alone — as are emoji sequences |
 | `nnbsp-legacy` | GL0101–02 | warning | NNBSP joining two Mongolian letters — the pre-16.0 suffix connector; fix: MVS |
 | `unknown-suffix` | GL0801–03 | warning | MVS- (or legacy NNBSP-) joined letter run not in the curated Hudum suffix dictionary (`references/suffixes.md` in the mongol-bichig skill); a run that is a *separate word* is named as one, with a fix to a plain space (after MVS only — after NNBSP `nnbsp-legacy` already fixes an overlapping span); the separated final a/e (ᠬᠠᠷ‑ᠠ) is exempt |
+| `space-before-suffix` | GL1301 | warning | A dictionary suffix after a plain U+0020 instead of a connector, which no font shows and no other rule sees; fix: MVS. Particles, ᠬᠢ/ᠬᠢᠨ and the words that take a space (ᠤᠤ, ᠦᠭᠡᠢ…) are never reported |
+| `space-before-suffix` | GL1302 | info | The same, for suffixes that are also words (ᠪᠠᠷ бар, ᠨᠠᠷ нар, ᠲᠠᠢ тай, ᠳᠤᠷ дур…): the text cannot say which is meant, so no fix |
 | `doubled-ae` | GL1001 | warning | Adjacent ᠠᠠ / ᠡᠡ — long a/e take the γ/g hiatus, never a doubled vowel, so this is Cyrillic аа/ээ copied letter for letter. No fix: the reflexive wants ᠢᠶᠠᠨ/ᠢᠶᠡᠨ and the vocative wants a single ᠠ/ᠡ as its own word. ᠣᠣ (short o) and ᠤᠤ/ᠦᠦ are untouched |
 | `compat-punctuation` | GL1101–03 | warning | Punctuation encoded as a *presentation form* — Vertical Forms (U+FE10–FE1F), CJK Compatibility Forms (U+FE30–FE4F), Small Form Variants (U+FE50–FE6F). These exist only to round-trip GB 18030 / CNS 11643; the vertical glyph is the font's job, and NFKC flattens U+FE16 to bare `?` rather than to ？. Fixed to the native ᠂ ᠃ ᠁ for comma / full stop / ellipsis and ？ for the question mark (UTN #57 Table 1 requires the CJK form), but plain ASCII `!` for the exclamation — no source requires a fullwidth one — and the nominal character otherwise |
 | `non-initial-o` | GL0701 | info | O/Ö (U+1823/U+1825) past the first syllable — dumb vowel-position heuristic; loanwords (ᠹᠣᠲᠣ) and lexical exceptions (ᠭᠣᠣᠯ) are legitimate, but ᠮᠣᠩᠭᠣᠯ is a real hit — write ᠮᠣᠩᠭᠤᠯ |
@@ -210,7 +212,7 @@ because the first deletes connectors the plain `nnbspLegacy` would rewrite.
 The suffix dictionary itself ships as part of the public API (`suffixes`),
 sourced from school grammar, UTN #57, and the mongfontbuilder registry.
 
-Roadmap (see `CLAUDE.md`): `space-before-suffix` · FVS registration against
+Roadmap (see `CLAUDE.md`): FVS registration against
 the standardized-variant tables · full stem–suffix vowel-harmony agreement.
 
 ## Why it matters

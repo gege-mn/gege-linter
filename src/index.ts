@@ -10,6 +10,7 @@ import { mvsContext } from './rules/mvs-context.js';
 import { nnbspLegacy, nnbspLegacyFormal } from './rules/nnbsp-legacy.js';
 import { noPua } from './rules/no-pua.js';
 import { nonInitialO } from './rules/non-initial-o.js';
+import { spaceBeforeSuffix } from './rules/space-before-suffix.js';
 import { unknownSuffix } from './rules/unknown-suffix.js';
 import { wrongBlock } from './rules/wrong-block.js';
 import { zwjZwnj } from './rules/zwj-zwnj.js';
@@ -32,6 +33,7 @@ export {
   nnbspLegacyFormal,
   nonInitialO,
   noPua,
+  spaceBeforeSuffix,
   unknownSuffix,
   wrongBlock,
   zwjZwnj,
@@ -57,6 +59,7 @@ export const rules: readonly Rule[] = [
   nnbspLegacy,
   compatPunctuation,
   unknownSuffix,
+  spaceBeforeSuffix,
   doubledAe,
   nonInitialO,
 ];

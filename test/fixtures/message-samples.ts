@@ -21,6 +21,8 @@ export const messageSamples: Readonly<
   'no-pua/many': { rule: 'no-pua', text: '\ue000\ue001\ue002' },
   'detached-suffix/verbal': { rule: 'detached-suffix', text: `ᠶᠠᠪᠤ${MVS}ᠳᠠᠭ` },
   'detached-suffix/formal': { rule: 'detached-suffix', mode: 'formal', text: `ᠨᠣᠮ${MVS}ᠲᠠᠢ` },
+  'space-before-suffix/suffix': { rule: 'space-before-suffix', text: 'ᠨᠣᠮ ᠲᠡᠢ' },
+  'space-before-suffix/ambiguous': { rule: 'space-before-suffix', text: 'ᠨᠣᠮ ᠪᠠᠷ' },
   'wrong-block/todo': { rule: 'wrong-block', text: 'ᡆ' },
   'wrong-block/sibe': { rule: 'wrong-block', text: 'ᡠ' },
   'wrong-block/manchu': { rule: 'wrong-block', text: 'ᡴ' },

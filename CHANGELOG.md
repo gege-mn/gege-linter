@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.10.1 — 2026-10-31
+
+### Fixed
+
+- **`space-before-suffix` no longer reports a word with a separated final
+  vowel.** ᠮᠢᠨᠦ ᠨᠡᠷ + MVS + ᠡ (my name) got GL1301, and its fix glued the two
+  words together. The same goes for ᠦᠨ + MVS + ᠡ, ᠤᠳ + MVS + ᠠ and others.
+- **It now sees a suffix with an FVS inside**, such as ᠤ + FVS1 + ᠨ.
+
+## 0.10.0 — 2026-10-31
+
+### Added
+
+- **`space-before-suffix`: a suffix after a plain space** (GL1301, warning, fix:
+  MVS). Case endings, plurals and fused forms, such as ᠪᠢᠴᠢᠭ ᠲᠡᠢ, which no font
+  shows and no other rule sees. In the default rule set, so text that was clean
+  may now report it.
+- **GL1302, info, no fix**, for suffixes that are also words in Монгол толь
+  (ᠪᠠᠷ бар, ᠨᠠᠷ нар, ᠲᠠᠢ тай, ᠳᠤᠷ дур…), where the text cannot say which is meant.
+  Particles, ᠬᠢ/ᠬᠢᠨ and the words that take a space (ᠤᠤ, ᠦᠭᠡᠢ…) are never reported.
+
 ## 0.9.0 — 2026-10-25
 
 `tungaamalToUnicode` now also reads Tungaamal's y before i. Nothing else

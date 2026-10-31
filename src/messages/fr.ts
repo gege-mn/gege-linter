@@ -20,6 +20,10 @@ export const fr: Catalog = {
     '«\u00a0{suffix}\u00a0» ({cyrillic}) est une désinence verbale, toujours attachée au radical — supprimez le connecteur',
   'detached-suffix/formal':
     '«\u00a0{suffix}\u00a0» ({cyrillic}) s’écrit attaché au radical dans les documents officiels — supprimez le connecteur',
+  'space-before-suffix/suffix':
+    '«\u00a0{suffix}\u00a0» ({cyrillic}) est un suffixe placé après une espace ordinaire — reliez-le par MVS (U+180E)',
+  'space-before-suffix/ambiguous':
+    'Après une espace ordinaire, «\u00a0{suffix}\u00a0» ({cyrillic}) peut être un suffixe ou un mot autonome — si c’est un suffixe, reliez-le par MVS (U+180E)',
   'wrong-block/todo': 'Lettre todo ({char}) dans un texte hudum',
   'wrong-block/sibe': 'Lettre sibe ({char}) dans un texte hudum',
   'wrong-block/manchu': 'Lettre mandchoue ({char}) dans un texte hudum',

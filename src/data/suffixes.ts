@@ -11,7 +11,7 @@
  * `spaceParticles` — the words that follow a plain space and must
  * never be connector-joined. Those are deliberately *not* re-exported as
  * suffixes: matching them after a connector would accept the exact bug that
- * the planned `space-before-suffix` rule exists to catch.
+ * the `space-before-suffix` rule exists to catch.
  */
 
 export type { SuffixCategory, SuffixEntry } from '@gege-mn/mongol-bichig';

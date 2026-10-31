@@ -21,6 +21,10 @@ export const en = {
     '‘{suffix}’ ({cyrillic}) is a verbal ending, always written attached to the stem — remove the connector',
   'detached-suffix/formal':
     '‘{suffix}’ ({cyrillic}) is written attached to the stem in formal documents — remove the connector',
+  'space-before-suffix/suffix':
+    '‘{suffix}’ ({cyrillic}) is a suffix after a plain space — join it with MVS (U+180E)',
+  'space-before-suffix/ambiguous':
+    '‘{suffix}’ ({cyrillic}) after a plain space may be a suffix or a word of its own — if a suffix, join it with MVS (U+180E)',
   'wrong-block/todo': 'Todo letter ({char}) in Hudum text',
   'wrong-block/sibe': 'Sibe letter ({char}) in Hudum text',
   'wrong-block/manchu': 'Manchu letter ({char}) in Hudum text',

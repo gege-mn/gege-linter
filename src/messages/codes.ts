@@ -38,4 +38,6 @@ export const codes: Readonly<Record<MessageId, string>> = {
   'compat-punctuation/borrowed': 'GL1104',
   'detached-suffix/verbal': 'GL1201',
   'detached-suffix/formal': 'GL1202',
+  'space-before-suffix/suffix': 'GL1301',
+  'space-before-suffix/ambiguous': 'GL1302',
 };

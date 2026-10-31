@@ -19,6 +19,10 @@ export const mn: Catalog = {
     '«{suffix}» ({cyrillic}) нь үйл үгийн төгсгөл тул үгийн үндэст үргэлж залгаж бичнэ — холбогчийг хасна уу',
   'detached-suffix/formal':
     '«{suffix}» ({cyrillic}) нь албан бичигт үгийн үндэст залгаж бичигдэнэ — холбогчийг хасна уу',
+  'space-before-suffix/suffix':
+    '«{suffix}» ({cyrillic}) нөхцөл энгийн зайн ард байна — MVS (U+180E)-ээр холбоно уу',
+  'space-before-suffix/ambiguous':
+    'Энгийн зайн ард орсон «{suffix}» ({cyrillic}) нь нөхцөл эсвэл бие даасан үг байж болно — нөхцөл бол MVS (U+180E)-ээр холбоно уу',
   'wrong-block/todo': 'Худам бичвэрт тод бичгийн үсэг ({char}) орсон',
   'wrong-block/sibe': 'Худам бичвэрт шивэ бичгийн үсэг ({char}) орсон',
   'wrong-block/manchu': 'Худам бичвэрт манж бичгийн үсэг ({char}) орсон',

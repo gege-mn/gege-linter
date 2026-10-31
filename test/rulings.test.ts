@@ -17,7 +17,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { applyFixes, lint } from '../src/index.js';
+import { applyFixes, lint, spaceBeforeSuffix } from '../src/index.js';
 
 /** One lint-then-fix pass — what the CLI does before it re-lints. */
 const fixed = (text: string): string => applyFixes(text, lint(text));
@@ -96,7 +96,7 @@ describe('rulings / clean — no misses, confirmed 4 of 4', () => {
 describe('rulings / running text', () => {
   it('repairs Магадгүй барууны соёлын нөлөө юм болов уу end to end', () => {
     const before = 'ᠮᠠᠭᠠᠳ ᠦᢉᠡᠢ ᠪᠠᠷᠠᠭᠤᠨ ᠤ\u180B ᠰᠣᠶᠤᠯ\u202Fᠤ\u180Bᠨ ᠨᠥᠯᠦᢉᠡ ᠶᠤᠮ ᠪᠣᠯᠪᠠ\u202Fᠤᠤ';
-    const after = 'ᠮᠠᠭᠠᠳ ᠦᠭᠡᠢ ᠪᠠᠷᠠᠭᠤᠨ ᠤ\u180B ᠰᠣᠶᠤᠯ\u180Eᠤᠨ ᠨᠥᠯᠦᠭᠡ ᠶᠤᠮ ᠪᠣᠯᠪᠠ ᠤᠤ';
+    const after = 'ᠮᠠᠭᠠᠳ ᠦᠭᠡᠢ ᠪᠠᠷᠠᠭᠤᠨ\u180Eᠤ\u180B ᠰᠣᠶᠤᠯ\u180Eᠤᠨ ᠨᠥᠯᠦᠭᠡ ᠶᠤᠮ ᠪᠣᠯᠪᠠ ᠤᠤ';
     expect(fixed(before)).toBe(after);
   });
 
@@ -208,12 +208,6 @@ describe('rulings / zwj-zwnj — the abbreviation pattern, ruled 2026-07-27', ()
 });
 
 describe('rulings / gaps the samples exposed', () => {
-  // холтосныхоо, агаар мандал дахь…, Магадгүй… all write the genitive ᠤ as a
-  // separate token after a plain U+0020, and the linter says nothing. This is
-  // planned rule 8, `space-before-suffix` — the same bug found by hand in
-  // gege.mn's footer. The corpus says it is not rare.
-  it.todo('space-before-suffix: plain U+0020 before a known suffix');
-
   // 28 of the surviving unknown-suffix runs in the word corpus are ᠠᠠ or ᠡᠡ.
   // orthography.md: long a/e are never doubled, they take the γ/g hiatus, so
   // adjacent U+1820 U+1820 or U+1821 U+1821 is a typo or a letter-for-letter
@@ -266,7 +260,10 @@ describe('rulings / sequence check — the six residual runs, 2026-07-27', () =>
   // introduced in Cyrillic and then transliterated letter for letter. That is
   // also why `doubled-ae` can carry no fix: the two readings want different
   // repairs. `doubled-ae` ships and settles the doubled form.
-  it.todo('space-before-suffix must not flag a plain space before a lone ᠠ/ᠡ (vocative)');
+  it('space-before-suffix must not flag a plain space before a lone ᠠ/ᠡ (vocative)', () => {
+    expect(lint('ᠠᠪᠤ ᠠ', [spaceBeforeSuffix])).toEqual([]);
+    expect(lint('ᠡᠵᠢ ᠡ', [spaceBeforeSuffix])).toEqual([]);
+  });
 
   // Re-asked, and the reader separated two morphemes that are identical in
   // Cyrillic: "сан/сэн/сон/сөн = past time suffixes, attached to the word as

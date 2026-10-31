@@ -16,6 +16,10 @@ export const zhHans: Catalog = {
     '{count} 个私用区码位——旧式字形编码（蒙科立时代），并非可通用交换的 Unicode 蒙古文',
   'detached-suffix/verbal': '“{suffix}”（{cyrillic}）是动词词尾，始终与词干连写——请删除后缀连接符',
   'detached-suffix/formal': '在正式文件中，“{suffix}”（{cyrillic}）应与词干连写——请删除后缀连接符',
+  'space-before-suffix/suffix':
+    '“{suffix}”（{cyrillic}）是后缀，前面却是普通空格——请用 MVS（U+180E）连接',
+  'space-before-suffix/ambiguous':
+    '普通空格后的“{suffix}”（{cyrillic}）可能是后缀，也可能是独立的词——如果是后缀，请用 MVS（U+180E）连接',
   'wrong-block/todo': '胡都木文中出现托忒文字母（{char}）',
   'wrong-block/sibe': '胡都木文中出现锡伯文字母（{char}）',
   'wrong-block/manchu': '胡都木文中出现满文字母（{char}）',
