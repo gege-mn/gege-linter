@@ -6,6 +6,8 @@
 
 - **GL1301's fix drops an FVS inside the suffix.** It kept the FVS, which
   `unknown-suffix` then reported as stray.
+- **`space-before-suffix` reports ᠴᠤ / ᠴᠦ** (-ч), the one pair of particles that
+  always takes MVS. After a plain space they are only a foreign word's чу/чү, which is rare.
 
 ## 0.10.1 — 2026-10-31
 

@@ -26,6 +26,12 @@ run `bun run build && bun run typecheck && bun run test`, confirm `bun pm pack -
 ships the right files, and then report that the release is ready — and stop
 there. Same rule in gege-converter and mongol-bichig.
 
+## Before calling a release ready
+
+A rule with a fix is not ready on synthetic samples. Run `bun run build && bun run real-pages`,
+read what it reports on live bichig pages, and check every suffix or word it names is a true
+hit. Audit before the owner publishes, not after.
+
 ## Conventions
 
 - Package manager: pnpm on CI, servers and other machines (`pnpm-lock.yaml` is

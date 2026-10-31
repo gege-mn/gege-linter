@@ -4,8 +4,10 @@ import { msg } from '../messages/index.js';
 import type { Diagnostic, Rule } from '../types.js';
 
 // Particles and ᠬᠢ/ᠬᠢᠨ also stand as words in ordinary text, so a space before
-// them says nothing.
+// them says nothing. ᠴᠤ/ᠴᠦ do not (owner's ruling): after a space they are only
+// a foreign word's чу/чү, which is rare.
 const STANDALONE = new Set(['particle', 'possession']);
+const ALWAYS_JOINED = new Set(['chu', 'chü']);
 
 // Also dictionary headwords (ᠪᠠᠷ бар, ᠨᠠᠷ нар, ᠲᠠᠢ тай, ᠳᠤᠷ дур…). The text
 // alone cannot tell which is meant, so these are hints and carry no fix.
@@ -27,7 +29,7 @@ const HOMOGRAPHS = new Set([
 ]);
 
 const entries = suffixes
-  .filter((entry) => !STANDALONE.has(entry.category))
+  .filter((entry) => ALWAYS_JOINED.has(entry.translit) || !STANDALONE.has(entry.category))
   .map((entry) => ({ entry, seq: [...entry.sequence] }));
 
 /**

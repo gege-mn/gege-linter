@@ -93,7 +93,7 @@ Tier 2 — data-driven (the data lives in `@gege-mn/mongol-bichig`):
 7. `unknown-suffix` — DONE. Connector followed by a sequence not in the
    `connectorSuffixes` registry (warn, not error). No count is quoted here:
    it moves whenever mongol-bichig publishes.
-8. `space-before-suffix` — DONE (2026-10-31). Plain U+0020 before a known suffix ("did you mean
+8. `space-before-suffix` — DONE (2026-10-31). `bun run real-pages` shows what it finds on live sites. Plain U+0020 before a known suffix ("did you mean
    MVS?") — a warning with a fix, or an info with none where the suffix is also
    a dictionary headword — the exact bug found by hand in gege.mn's footer. The words in
    `spaceParticles` take a space, and they never match because the rule reads
