@@ -40,4 +40,5 @@ export const codes: Readonly<Record<MessageId, string>> = {
   'detached-suffix/formal': 'GL1202',
   'space-before-suffix/suffix': 'GL1301',
   'space-before-suffix/ambiguous': 'GL1302',
+  'ii-before-final-ae/glide': 'GL1401',
 };

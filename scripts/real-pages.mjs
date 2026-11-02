@@ -14,7 +14,7 @@ const PAGES = [
   'https://mof.gov.mn/mng',
   'https://mongolian-script.blogspot.com/',
 ];
-const RULE = 'space-before-suffix';
+const RULES = ['space-before-suffix', 'ii-before-final-ae'];
 const MAX_PASSES = 3;
 
 const tally = new Map();
@@ -35,8 +35,8 @@ for (const page of PAGES) {
 
   for (const run of runs) {
     const cps = [...run];
-    for (const d of lint(run).filter((x) => x.rule === RULE)) {
-      const key = `${d.code} ${d.data?.suffix}`;
+    for (const d of lint(run).filter((x) => RULES.includes(x.rule))) {
+      const key = `${d.code} ${d.data?.suffix ?? d.data?.letter}`;
       const entry = tally.get(key) ?? { count: 0, sample: '' };
       entry.count++;
       entry.sample ||= cps.slice(Math.max(0, d.start - 12), d.end + 10).join('');
@@ -54,7 +54,7 @@ for (const page of PAGES) {
   }
 }
 
-console.log(`\n${RULE}, most common first. Every line should be a true suffix:`);
+console.log(`\n${RULES.join(', ')}, most common first. Every line should be a true hit:`);
 for (const [key, { count, sample }] of [...tally].sort((a, b) => b[1].count - a[1].count))
   console.log(`${String(count).padStart(4)}  ${key}   ${sample}`);
 

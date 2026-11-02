@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.11.0 — 2026-11-03
+
+### Added
+
+- **`ii-before-final-ae`: a doubled i before a separated final a/e** (GL1401,
+  warning, fix: ᠢᠶ). ᠰᠤᠮᠢᠢ + MVS + ᠠ is Сумъяа typed wrong: the second i is
+  the y, ᠰᠤᠮᠢᠶ + MVS + ᠠ (owner's ruling, 2026-11-03). Unicode encodes by
+  sound, not shape, and UTN #57 writes `daliy·a` and has no i i + MVS anywhere
+  in its shaping suites. The two draw the same in Noto Sans Mongolian, so only
+  the code points show it. Reported only when the ᠠ/ᠡ ends the word: a long
+  ii elsewhere (`γaǰiiqu`, Хавий `qabii`) and ii + connector + any other
+  suffix are left alone. Legacy NNBSP is caught too, and its fix combines with
+  `nnbsp-legacy`'s: ᠢᠢ + NNBSP + ᠠ becomes ᠢᠶ + MVS + ᠠ in one pass. In the
+  default and the formal rule sets, so text that was clean may now report it.
+
 ## 0.10.3 — 2026-10-31
 
 ### Fixed

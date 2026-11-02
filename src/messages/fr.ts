@@ -54,6 +54,8 @@ export const fr: Catalog = {
     'Suffixe hudum inconnu «\u00a0{suffix}\u00a0» après {connector} — absent du dictionnaire des suffixes',
   'doubled-ae/doubled':
     '{letter} ({char}) redoublé — les a/e longs s’écrivent avec le hiatus γ/g, jamais redoublés\u00a0; c’est en général le cyrillique аа/ээ recopié lettre à lettre (le réfléchi est ᠢᠶᠠᠨ/ᠢᠶᠡᠨ\u00a0; le vocatif est un seul ᠠ/ᠡ formant un mot à part)',
+  'ii-before-final-ae/glide':
+    'ᠢ redoublé devant un {letter} final séparé — le second ᠢ est ᠶ (U+1836)\u00a0: Сумъяа, захиа et жишээ s’écrivent avec ᠢᠶ. Les deux s’affichent à l’identique, seuls les points de code les distinguent',
   'non-initial-o/later':
     'O/Ö (U+1823/U+1825) n’apparaît normalement qu’en première syllabe — les syllabes suivantes prennent U/Ü (U+1824/U+1826)\u00a0; les emprunts et quelques exceptions lexicales sont admis',
   'fusable-stack/fusable':

@@ -6,6 +6,7 @@ import { detachedSuffix, detachedSuffixFormal } from './rules/detached-suffix.js
 import { doubledAe } from './rules/doubled-ae.js';
 import { fusableStack } from './rules/fusable-stack.js';
 import { fvsPlacement } from './rules/fvs-placement.js';
+import { iiBeforeFinalAe } from './rules/ii-before-final-ae.js';
 import { mvsContext } from './rules/mvs-context.js';
 import { nnbspLegacy, nnbspLegacyFormal } from './rules/nnbsp-legacy.js';
 import { noPua } from './rules/no-pua.js';
@@ -28,6 +29,7 @@ export {
   doubledAe,
   fusableStack,
   fvsPlacement,
+  iiBeforeFinalAe,
   mvsContext,
   nnbspLegacy,
   nnbspLegacyFormal,
@@ -61,6 +63,7 @@ export const rules: readonly Rule[] = [
   unknownSuffix,
   spaceBeforeSuffix,
   doubledAe,
+  iiBeforeFinalAe,
   nonInitialO,
 ];
 

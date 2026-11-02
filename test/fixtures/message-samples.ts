@@ -40,6 +40,7 @@ export const messageSamples: Readonly<
   'unknown-suffix/stray-fvs': { rule: 'unknown-suffix', text: `ᠨᠡᠷ${MVS}ᠤ${FVS1}ᠳ` },
   'unknown-suffix/unknown': { rule: 'unknown-suffix', text: `ᠨᠡᠷ${MVS}ᠽᠽᠽ` },
   'doubled-ae/doubled': { rule: 'doubled-ae', text: 'ᠠᠪᠠᠠ' },
+  'ii-before-final-ae/glide': { rule: 'ii-before-final-ae', text: `ᠰᠤᠮᠢᠢ${MVS}ᠠ` },
   'non-initial-o/later': { rule: 'non-initial-o', text: 'ᠮᠣᠩᠭᠣᠯ' },
   'fusable-stack/fusable': { rule: 'fusable-stack', text: `ᠨᠡᠷ${MVS}ᠳᠤ${MVS}ᠪᠠᠨ` },
 };

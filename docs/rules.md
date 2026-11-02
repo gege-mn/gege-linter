@@ -10,7 +10,7 @@ severity, or when picking up the next piece of work.
 
 The numbers below are the roadmap's, not the finding codes'. Codes
 (`src/messages/codes.ts`) number the rules in the order they shipped —
-`nnbsp-legacy` GL01 through `space-before-suffix` GL13 — and a new rule takes the
+`nnbsp-legacy` GL01 through `ii-before-final-ae` GL14 — and a new rule takes the
 next free GL number, along with message ids in all four catalogs and a sample
 in `test/fixtures/message-samples.ts`. A published code is never renumbered
 or reused.
@@ -240,6 +240,38 @@ mechanical and both with a fix:
     **Modes** are rule sets, not an option on `lint`: `rules` is the default,
     `formalRules` (`rulesFor('formal')`) swaps in `detachedSuffixFormal` and
     `nnbspLegacyFormal`. CLI: `--mode formal`.
+
+14. `ii-before-final-ae` — DONE (2026-11-03, owner's ruling). ᠢᠢ (U+1822
+    U+1822), a connector (MVS or legacy NNBSP), then ᠠ/ᠡ with no Mongolian
+    letter after it (an FVS on the vowel is looked through) → **warning, fix
+    ᠢᠶ** over the pair. Сумъяа is ᠰᠤᠮᠢᠶ + MVS + ᠠ `sumiy-a`, never `sumii-a`.
+
+    The evidence, gathered before the ruling: core spec ch. 13.5 encodes by
+    phonetic value, not glyph shape; UTN #57 v4 lists `daliy·a` (d a l i y
+    MVS a), drawn D A L I I Á; the UTN #57 shaping suites vendored in
+    mongol-bichig (`vendor/mongfontbuilder/suites/`) have only i y MVS a/e —
+    core-hud d-3, y-4 (аман захиа), eac-hud MXZ21-1 (жишээ), MTZ11-2
+    (`aturiy-a`) — and no i i MVS; Kimo writes iy-a for Сумъяа, Адъяа, Мария,
+    Азия, яриа, захиа. The 78,902-row harvest has i y + connector + final a/e
+    2,332 times and i i + connector + final a/e never. In Noto Sans Mongolian
+    3.103 ᠢᠢ‑ᠠ and ᠢᠶ‑ᠠ draw identically, which is why people type the wrong
+    one and why only the bytes can show it.
+
+    Narrow on purpose. A long i is written ii (`γaǰiiqu`, Хавий `qabii`,
+    final -ий), so a doubled i is never reported on its own, and ii +
+    connector + any suffix other than a lone final a/e (ᠶᠢᠨ, ᠶᠢ, ᠠᠴᠠ …) is
+    left alone — 77 such connectors in the harvest, all silent. The vocative
+    takes a plain space, never a connector (mongol-bichig `suffixes.md`), so
+    ii + connector + a/e at a word's end has no other reading. A further
+    connector after the vowel (ii‑a‑yin) still counts as the end of the word.
+
+    **Both modes.** It is an encoding error, not a matter of register, so it
+    is in `rules` and therefore in `formalRules`; the modes differ only in
+    which endings are attached. The fix rewrites the pair and never the
+    connector, so it combines with `nnbsp-legacy`'s NNBSP → MVS in one
+    `applyFixes` pass: ᠢᠢ + NNBSP + ᠠ → ᠢᠶ + MVS + ᠠ. `detached-suffix`'s
+    span starts at the MVS, also clear of the pair. 0 hits on the
+    `real-pages` sites (2026-11-03).
 
 ## What the 2026-07-27 spot check settled
 

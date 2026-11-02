@@ -55,6 +55,8 @@ export const en = {
     'Unknown Hudum suffix ‘{suffix}’ after {connector} — not in the suffix dictionary',
   'doubled-ae/doubled':
     'Doubled {letter} ({char}) — long a/e are written with the γ/g hiatus, never doubled, so this is usually Cyrillic аа/ээ copied letter for letter (the reflexive is ᠢᠶᠠᠨ/ᠢᠶᠡᠨ; the vocative is a single ᠠ/ᠡ as its own word)',
+  'ii-before-final-ae/glide':
+    'Doubled ᠢ before a separated final {letter} — the second ᠢ is ᠶ (U+1836): Сумъяа, захиа and жишээ are spelled ᠢᠶ. The two look the same on screen, so only the code points tell them apart',
   'non-initial-o/later':
     'O/Ö (U+1823/U+1825) normally occurs only in the first syllable — later syllables use U/Ü (U+1824/U+1826); loanwords and a few lexical exceptions are fine',
   'fusable-stack/fusable':
