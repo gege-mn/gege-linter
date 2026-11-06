@@ -10,7 +10,7 @@ severity, or when picking up the next piece of work.
 
 The numbers below are the roadmap's, not the finding codes'. Codes
 (`src/messages/codes.ts`) number the rules in the order they shipped —
-`nnbsp-legacy` GL01 through `ii-before-final-ae` GL14 — and a new rule takes the
+`nnbsp-legacy` GL01 through `fvs-unregistered` GL15 — and a new rule takes the
 next free GL number, along with message ids in all four catalogs and a sample
 in `test/fixtures/message-samples.ts`. A published code is never renumbered
 or reused.
@@ -104,13 +104,25 @@ Tier 2 — data-driven (the data lives in `@gege-mn/mongol-bichig`):
    only after MVS; after NNBSP, `nnbsp-legacy` already corrects the connector
    over a span *inside* this one, and two fixes overlapping the same code
    points would corrupt `applyFixes`.
-9. `fvs-unregistered` — (letter, FVS) pair not in SVS/UTN #57 tables.
-   `variants.json` is vendored in mongol-bichig (`vendor/mongfontbuilder/`,
-   v0.13.0, 2026-10-02) but not yet compiled into the package — still blocked
-   on that repo exporting a per-letter MNG table, not on anything here. **Validate against mongfontbuilder, not UCD
-   `StandardizedVariants.txt`** — neither is a superset of the other, and the
-   core spec itself calls the UCD list defective. The Hudum valid-FVS table
-   is in mongol-bichig's `references/variation-sequences.md`.
+9. `fvs-unregistered` — DONE (2026-11-06, GL15). An FVS after a Hudum letter
+   (U+1820–1842, U+1878) that selects no Hudum form → **warning, no fix**.
+   Decided by mongol-bichig 0.3.1's `fvsStatus`, which reads
+   mongfontbuilder's MNG locale; UCD 18.0 agrees with it but has no
+   writing-system field, so on its own it would accept Manchu-only forms.
+   GL1501 is a form no Hudum position has, GL1502 one that only Todo, Sibe,
+   Manchu or Ali Gali registers. The joining position comes from the
+   neighbours (FVS runs looked through); next to MVS, NNBSP, ZWJ, ZWNJ,
+   nirugu, U+1806 or U+1807 the rule checks per letter only, so it never
+   guesses a position. Other scripts' letters are `wrong-block`'s and a
+   selector with no letter before it is `fvs-placement`'s. No fix because a
+   wrong FVS usually means a different form was meant.
+
+   Live pages on 2026-11-06: 17 hits, all GL1502 and all on wikibilig.mn,
+   all one habit — NA + FVS3 before a consonant in loanwords (энзим,
+   интернет, Александр, Сталинград, квант). Noto v3.002 draws that FVS3 as
+   a visible `fvs3` marker (hb-shape), so they are true hits; removing it
+   gives the dotless medial NA the writer wanted, which is the default
+   there.
 
 Tier 3 — linguistic (optional, later): vowel-harmony agreement between stem
 and suffix (UTN #57 Table 5 masculine {a,o,u} vs feminine {e,ö,ü} is a decent

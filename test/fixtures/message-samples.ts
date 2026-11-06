@@ -4,6 +4,7 @@ const MVS = '\u180e';
 const NNBSP = '\u202f';
 const FVS1 = '\u180b';
 const FVS2 = '\u180c';
+const FVS3 = '\u180d';
 
 /**
  * One input per message, and the rule (by name) that emits it. Type-only
@@ -41,6 +42,8 @@ export const messageSamples: Readonly<
   'unknown-suffix/unknown': { rule: 'unknown-suffix', text: `ᠨᠡᠷ${MVS}ᠽᠽᠽ` },
   'doubled-ae/doubled': { rule: 'doubled-ae', text: 'ᠠᠪᠠᠠ' },
   'ii-before-final-ae/glide': { rule: 'ii-before-final-ae', text: `ᠰᠤᠮᠢᠢ${MVS}ᠠ` },
+  'fvs-unregistered/unregistered': { rule: 'fvs-unregistered', text: `ᠮ${FVS1}ᠠ` },
+  'fvs-unregistered/other-script': { rule: 'fvs-unregistered', text: `ᠠᠨ${FVS3}ᠠ` },
   'non-initial-o/later': { rule: 'non-initial-o', text: 'ᠮᠣᠩᠭᠣᠯ' },
   'fusable-stack/fusable': { rule: 'fusable-stack', text: `ᠨᠡᠷ${MVS}ᠳᠤ${MVS}ᠪᠠᠨ` },
 };

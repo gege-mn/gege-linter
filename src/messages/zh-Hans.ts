@@ -50,6 +50,10 @@ export const zhHans: Catalog = {
     '{letter}（{char}）重叠——长元音 a/e 以 γ/g 隔开书写，从不重叠，因此这通常是把西里尔文的 аа/ээ 逐字母照搬（反身领属后缀为 ᠢᠶᠠᠨ/ᠢᠶᠡᠨ；呼格是单独成词的一个 ᠠ/ᠡ）',
   'ii-before-final-ae/glide':
     '分写的词末 {letter} 之前的 ᠢ 重叠——第二个 ᠢ 应为 ᠶ（U+1836）：Сумъяа、захиа、жишээ 都写作 ᠢᠶ。两者在屏幕上显示相同，只有码位能区分',
+  'fvs-unregistered/unregistered':
+    'FVS{n}（{char}）在此位置不选择 {letter}（{base}）的任何胡都木文字形——符合标准的字体会忽略它，Noto 会显示可见标记；请删除，或改用本意要选的变体',
+  'fvs-unregistered/other-script':
+    '{letter}（{base}）之后的 FVS{n}（{char}）选择的是托忒文、锡伯文、满文或阿礼嘎礼字形，而非胡都木文字形——胡都木文字体会忽略它，Noto 会显示可见标记',
   'non-initial-o/later':
     'O/Ö（U+1823/U+1825）通常只出现在第一音节——后续音节用 U/Ü（U+1824/U+1826）；外来词及少数词汇例外不在此限',
   'fusable-stack/fusable':

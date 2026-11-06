@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.12.0 — 2026-11-06
+
+### Added
+
+- **`fvs-unregistered`: an FVS that selects no Hudum form** (GL1501 and
+  GL1502, warning, no fix). After a Hudum letter, the selector is checked
+  against the registry `@gege-mn/mongol-bichig` 0.3.1 ships (`fvsStatus`,
+  mongfontbuilder's MNG locale) in the letter's joining position; next to
+  MVS, NNBSP, ZWJ, ZWNJ or nirugu it is checked per letter, never guessed.
+  GL1502 names a form that only Todo, Sibe, Manchu or Ali Gali registers,
+  such as NA + FVS3 medial, which Noto draws as a visible `fvs3` marker. On
+  live pages that is all it found: 17 loanwords on one site (энзим, интернет,
+  Александр). No fix, because the writer meant some form and only a reader
+  knows which. In the default and the formal rule sets, so text that was
+  clean may now report it.
+
+### Changed
+
+- **Requires `@gege-mn/mongol-bichig` ^0.3.1** (was ^0.2.3), for `fvsStatus`.
+
 ## 0.11.0 — 2026-11-03
 
 ### Added

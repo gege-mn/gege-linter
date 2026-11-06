@@ -57,6 +57,10 @@ export const en = {
     'Doubled {letter} ({char}) — long a/e are written with the γ/g hiatus, never doubled, so this is usually Cyrillic аа/ээ copied letter for letter (the reflexive is ᠢᠶᠠᠨ/ᠢᠶᠡᠨ; the vocative is a single ᠠ/ᠡ as its own word)',
   'ii-before-final-ae/glide':
     'Doubled ᠢ before a separated final {letter} — the second ᠢ is ᠶ (U+1836): Сумъяа, захиа and жишээ are spelled ᠢᠶ. The two look the same on screen, so only the code points tell them apart',
+  'fvs-unregistered/unregistered':
+    'FVS{n} ({char}) selects no Hudum form of {letter} ({base}) here — a conforming font ignores it and Noto draws a visible marker; remove it or use the variant that was meant',
+  'fvs-unregistered/other-script':
+    'FVS{n} ({char}) after {letter} ({base}) selects a Todo, Sibe, Manchu or Ali Gali form, not a Hudum one — a Hudum font ignores it and Noto draws a visible marker',
   'non-initial-o/later':
     'O/Ö (U+1823/U+1825) normally occurs only in the first syllable — later syllables use U/Ü (U+1824/U+1826); loanwords and a few lexical exceptions are fine',
   'fusable-stack/fusable':

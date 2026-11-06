@@ -41,4 +41,6 @@ export const codes: Readonly<Record<MessageId, string>> = {
   'space-before-suffix/suffix': 'GL1301',
   'space-before-suffix/ambiguous': 'GL1302',
   'ii-before-final-ae/glide': 'GL1401',
+  'fvs-unregistered/unregistered': 'GL1501',
+  'fvs-unregistered/other-script': 'GL1502',
 };
