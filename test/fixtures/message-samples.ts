@@ -44,6 +44,7 @@ export const messageSamples: Readonly<
   'ii-before-final-ae/glide': { rule: 'ii-before-final-ae', text: `ᠰᠤᠮᠢᠢ${MVS}ᠠ` },
   'fvs-unregistered/unregistered': { rule: 'fvs-unregistered', text: `ᠮ${FVS1}ᠠ` },
   'fvs-unregistered/other-script': { rule: 'fvs-unregistered', text: `ᠠᠨ${FVS3}ᠠ` },
+  'undotted-sha/dotless': { rule: 'undotted-sha', text: 'ᠵᠢᠱᠢᠭ' },
   'non-initial-o/later': { rule: 'non-initial-o', text: 'ᠮᠣᠩᠭᠣᠯ' },
   'fusable-stack/fusable': { rule: 'fusable-stack', text: `ᠨᠡᠷ${MVS}ᠳᠤ${MVS}ᠪᠠᠨ` },
 };

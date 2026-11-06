@@ -10,7 +10,7 @@ severity, or when picking up the next piece of work.
 
 The numbers below are the roadmap's, not the finding codes'. Codes
 (`src/messages/codes.ts`) number the rules in the order they shipped —
-`nnbsp-legacy` GL01 through `fvs-unregistered` GL15 — and a new rule takes the
+`nnbsp-legacy` GL01 through `undotted-sha` GL16 — and a new rule takes the
 next free GL number, along with message ids in all four catalogs and a sample
 in `test/fixtures/message-samples.ts`. A published code is never renumbered
 or reused.
@@ -284,6 +284,24 @@ mechanical and both with a fix:
     `applyFixes` pass: ᠢᠢ + NNBSP + ᠠ → ᠢᠶ + MVS + ᠠ. `detached-suffix`'s
     span starts at the MVS, also clear of the pair. 0 hits on the
     `real-pages` sites (2026-11-03).
+15. `undotted-sha` — DONE (2026-11-07, owner's ruling, GL16). ᠱ (U+1831)
+    directly before ᠢ (U+1822) with no selector → **warning, fix ᠱ + FVS2**
+    over the SHA. UTN #57 makes SHA's dotless form (written unit `S`) the
+    default before I, so the font draws SA: жишээ and жишиг, which the
+    dictionary spells with a bare SHA I, read as if spelled with s. FVS2
+    selects the dotted `Sh`. Measured on Noto 3.103: only I triggers it, in
+    initial and medial position (a final I counts); every other following
+    letter keeps the dots. The detail and the measurements are mongol-bichig
+    `variation-sequences.md`, "SHA before I", and the data is its
+    `undottedSha` (0.4.0).
+
+    The fix is safe to apply unasked, because the dotted form is the one the
+    letter SHA exists to show; a writer who wanted SA would have typed SA.
+    An FVS1 there selects the dotless form on purpose and is left alone.
+    **Both modes**, in `rules` and so in `formalRules`. One true hit on the
+    `real-pages` sites (2026-11-07), a loanword with ш (ᠾᠧᠨᠢᠱᠢ). The
+    converter needs no rule: mongol-bichig 0.4.0's `toScript` writes `ši`
+    as SHA + FVS2 + I.
 
 ## What the 2026-07-27 spot check settled
 

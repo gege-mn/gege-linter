@@ -61,6 +61,8 @@ export const en = {
     'FVS{n} ({char}) selects no Hudum form of {letter} ({base}) here — fonts ignore it or, like Noto, draw it as a visible marker; remove it or use the variant that was meant',
   'fvs-unregistered/other-script':
     'FVS{n} ({char}) after {letter} ({base}) selects a Todo, Sibe, Manchu or Ali Gali form, not a Hudum one — fonts ignore it or, like Noto, draw it as a visible marker; remove it or use the variant that was meant',
+  'undotted-sha/dotless':
+    'ᠱ before ᠢ is drawn without its dots, the same as ᠰ — put FVS2 (U+180C) after the ᠱ to keep them, as жишээ and жишиг need',
   'non-initial-o/later':
     'O/Ö (U+1823/U+1825) normally occurs only in the first syllable — later syllables use U/Ü (U+1824/U+1826); loanwords and a few lexical exceptions are fine',
   'fusable-stack/fusable':

@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.13.0 — 2026-11-07
+
+### Added
+
+- **`undotted-sha`: SHA before I with no selector** (GL1601, warning, fix:
+  ᠱ + FVS2). UTN #57 draws SHA without its dots before I by default, so
+  жишээ and жишиг, spelled with SHA in the dictionary, show as if spelled
+  with SA. FVS2 selects the dotted form (owner's ruling, 2026-11-07). The fix
+  is safe to apply unasked; a deliberate FVS1 is left alone. In the default
+  and the formal rule sets. One true hit on live pages, a loanword with ш.
+- `real-pages` now reports `undotted-sha` too.
+
+### Changed
+
+- **Requires `@gege-mn/mongol-bichig` ^0.4.0** (was ^0.3.1), for
+  `undottedSha`.
+
 ## 0.12.0 — 2026-11-06
 
 ### Added

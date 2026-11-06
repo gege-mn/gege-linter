@@ -14,7 +14,7 @@ const PAGES = [
   'https://mof.gov.mn/mng',
   'https://mongolian-script.blogspot.com/',
 ];
-const RULES = ['space-before-suffix', 'ii-before-final-ae', 'fvs-unregistered'];
+const RULES = ['space-before-suffix', 'ii-before-final-ae', 'fvs-unregistered', 'undotted-sha'];
 const MAX_PASSES = 3;
 
 const tally = new Map();
@@ -36,7 +36,7 @@ for (const page of PAGES) {
   for (const run of runs) {
     const cps = [...run];
     for (const d of lint(run).filter((x) => RULES.includes(x.rule))) {
-      const key = `${d.code} ${d.data?.suffix ?? d.data?.letter}${d.data?.n ? ` FVS${d.data.n}` : ''}`;
+      const key = `${d.code} ${d.data?.suffix ?? d.data?.letter ?? cps.slice(d.start, d.end).join('')}${d.data?.n ? ` FVS${d.data.n}` : ''}`;
       const entry = tally.get(key) ?? { count: 0, sample: '' };
       entry.count++;
       entry.sample ||= cps.slice(Math.max(0, d.start - 12), d.end + 10).join('');

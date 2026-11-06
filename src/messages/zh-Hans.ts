@@ -54,6 +54,8 @@ export const zhHans: Catalog = {
     'FVS{n}（{char}）在此位置不选择 {letter}（{base}）的任何胡都木文字形——字体会忽略它，或像 Noto 那样显示为可见标记；请删除，或改用本意要选的变体',
   'fvs-unregistered/other-script':
     '{letter}（{base}）之后的 FVS{n}（{char}）选择的是托忒文、锡伯文、满文或阿礼嘎礼字形，而非胡都木文字形——字体会忽略它，或像 Noto 那样显示为可见标记；请删除，或改用本意要选的变体',
+  'undotted-sha/dotless':
+    'ᠢ 之前的 ᠱ 显示为无点字形，与 ᠰ 相同——请在 ᠱ 之后加 FVS2（U+180C）以保留两点，如 жишээ、жишиг',
   'non-initial-o/later':
     'O/Ö（U+1823/U+1825）通常只出现在第一音节——后续音节用 U/Ü（U+1824/U+1826）；外来词及少数词汇例外不在此限',
   'fusable-stack/fusable':

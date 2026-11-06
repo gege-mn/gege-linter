@@ -13,6 +13,7 @@ import { nnbspLegacy, nnbspLegacyFormal } from './rules/nnbsp-legacy.js';
 import { noPua } from './rules/no-pua.js';
 import { nonInitialO } from './rules/non-initial-o.js';
 import { spaceBeforeSuffix } from './rules/space-before-suffix.js';
+import { undottedSha } from './rules/undotted-sha.js';
 import { unknownSuffix } from './rules/unknown-suffix.js';
 import { wrongBlock } from './rules/wrong-block.js';
 import { zwjZwnj } from './rules/zwj-zwnj.js';
@@ -38,6 +39,7 @@ export {
   nonInitialO,
   noPua,
   spaceBeforeSuffix,
+  undottedSha,
   unknownSuffix,
   wrongBlock,
   zwjZwnj,
@@ -57,6 +59,7 @@ export const rules: readonly Rule[] = [
   mvsContext,
   fvsPlacement,
   fvsUnregistered,
+  undottedSha,
   noPua,
   detachedSuffix,
   wrongBlock,

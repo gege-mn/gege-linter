@@ -60,6 +60,8 @@ export const fr: Catalog = {
     'FVS{n} ({char}) ne sélectionne ici aucune forme hudum de {letter} ({base}) — les polices l’ignorent ou, comme Noto, l’affichent comme un repère visible\u00a0; supprimez-le ou employez la variante voulue',
   'fvs-unregistered/other-script':
     'FVS{n} ({char}) après {letter} ({base}) sélectionne une forme todo, sibe, mandchoue ou ali gali, pas hudum — les polices l’ignorent ou, comme Noto, l’affichent comme un repère visible\u00a0; supprimez-le ou employez la variante voulue',
+  'undotted-sha/dotless':
+    'ᠱ devant ᠢ s’affiche sans ses points, comme ᠰ — placez FVS2 (U+180C) après le ᠱ pour les garder, comme l’exigent жишээ et жишиг',
   'non-initial-o/later':
     'O/Ö (U+1823/U+1825) n’apparaît normalement qu’en première syllabe — les syllabes suivantes prennent U/Ü (U+1824/U+1826)\u00a0; les emprunts et quelques exceptions lexicales sont admis',
   'fusable-stack/fusable':
